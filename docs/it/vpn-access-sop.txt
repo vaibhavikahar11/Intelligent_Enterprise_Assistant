@@ -1,0 +1,178 @@
+================================================================================
+                    ACME CORPORATION - IT STANDARD OPERATING PROCEDURE
+                              VPN ACCESS & REMOTE CONNECTIVITY
+                    Document Version: 1.8 | Effective Date: 01-Jan-2024
+                         Maintained by: IT Operations & Security Department
+================================================================================
+
+1. PURPOSE
+----------
+This SOP governs the setup, usage, and security requirements for Virtual Private
+Network (VPN) access at Acme Corporation. VPN is the approved method for securely
+accessing internal company resources — including file servers, internal applications,
+and development environments — from outside the corporate office network.
+
+All employees, contractors, and authorized users who require remote access to
+internal systems MUST use the company-approved VPN solution.
+
+--------------------------------------------------------------------------------
+
+2. VPN CLIENT — GLOBALPROTECT
+-------------------------------
+   - Approved VPN Solution: GlobalProtect by Palo Alto Networks.
+   - Download the GlobalProtect VPN client from the company's internal
+     software distribution portal:
+     URL: https://software.company.com
+   - Log in to the software portal using your corporate credentials to
+     access the download section.
+
+   INSTALLATION STEPS:
+   Step 1: Visit https://software.company.com and log in.
+   Step 2: Navigate to "VPN & Remote Access" in the software catalog.
+   Step 3: Download the GlobalProtect installer for your operating system
+           (Windows 10/11, macOS, or Linux).
+   Step 4: Run the installer and follow the on-screen instructions.
+   Step 5: Once installed, open GlobalProtect from the system tray or
+           Applications folder.
+   Step 6: When prompted for the VPN Gateway address, enter:
+           vpn.company.com
+   Step 7: Complete the MFA verification to finalize the first connection.
+
+--------------------------------------------------------------------------------
+
+3. VPN SERVER & CONNECTION DETAILS
+------------------------------------
+   - VPN Gateway Address: vpn.company.com
+   - Authentication: Corporate Active Directory credentials
+     (same username and password used for email/Windows login).
+   - Multi-Factor Authentication (MFA): REQUIRED for all VPN connections.
+     Approve the MFA push notification on Microsoft Authenticator or
+     enter the time-based OTP when prompted.
+   - Protocol: IPSec/SSL (automatically negotiated by GlobalProtect).
+   - DNS: VPN automatically routes internal DNS queries when connected.
+
+--------------------------------------------------------------------------------
+
+4. WHEN IS VPN REQUIRED?
+--------------------------
+   VPN access is MANDATORY in the following situations:
+   a) Accessing any internal company application from outside the office
+      (e.g., ERP, HRMS, source code repositories, internal dashboards).
+   b) Accessing file shares on internal servers or NAS devices.
+   c) Using Remote Desktop Protocol (RDP) to connect to office workstations.
+   d) Accessing databases or API endpoints hosted on the internal network.
+   e) Any remote administrative activity on company infrastructure.
+
+   NOTE: Public-facing company websites, the Microsoft 365 suite (Outlook,
+   Teams, SharePoint Online), and external SaaS tools do NOT require VPN
+   as they are accessible over the internet directly.
+
+--------------------------------------------------------------------------------
+
+5. REQUESTING VPN ACCESS
+--------------------------
+   - VPN access is not automatically granted to all employees.
+   - Employees who require VPN access must submit a formal IT ticket:
+     Helpdesk Portal: https://helpdesk.company.com
+   - In the ticket, select category: "Access Request" → "VPN Access."
+   - Provide justification for VPN access and specify required internal resources.
+   - The request must be endorsed by the direct manager (manager approval
+     required before IT provisioning).
+   - Standard VPN access is approved and provisioned within 2 (two)
+     BUSINESS DAYS of receiving a manager-approved request.
+   - For urgent VPN requirements, mark the ticket as "High Priority" and
+     contact the IT helpdesk directly at Ext. 1234.
+
+--------------------------------------------------------------------------------
+
+6. VPN SECURITY POLICIES
+--------------------------
+
+   6.1 SPLIT TUNNELING — DISABLED
+      - Split tunneling is DISABLED on the corporate VPN.
+      - This means ALL internet traffic — including personal browsing —
+        is routed through the company VPN tunnel when connected.
+      - This is a deliberate security measure to prevent data exfiltration
+        and ensure that all traffic is subject to company security controls.
+      - As a consequence, general internet browsing may be slower while
+        on VPN. Employees should disconnect from VPN if they do not
+        require internal access at that moment, rather than browsing
+        personal content over the corporate VPN.
+
+   6.2 SESSION TIMEOUT
+      - VPN sessions will automatically DISCONNECT after 8 (eight) hours
+        of IDLE activity (no data transmission).
+      - If the session times out, simply reconnect via the GlobalProtect client.
+      - Active sessions with continuous data activity will not be interrupted.
+      - Sessions are forcibly terminated at midnight and must be manually
+        re-established each working day.
+
+   6.3 ACCEPTABLE USE
+      - The VPN must be used ONLY for legitimate company business purposes.
+      - Do NOT use the corporate VPN for:
+        * Personal streaming services (Netflix, YouTube, etc.)
+        * Torrenting or P2P file sharing
+        * Accessing personal social media for prolonged periods
+        * Circumventing geo-restrictions on non-business sites
+        * Any illegal or policy-violating activity
+      - Using VPN resources for personal browsing degrades performance
+        for all users and may result in VPN access revocation.
+
+   6.4 VPN MONITORING & LOGGING
+      - All VPN connection activity and data flows are LOGGED and MONITORED
+        by the IT Security team for security compliance purposes.
+      - Logs include: connection timestamps, source IP addresses, destination
+        internal resources, and data volume transferred.
+      - These logs are retained for a minimum of 12 months as per the
+        company's IT Security Policy and applicable regulations.
+      - Anomalous activity (e.g., connections at unusual hours, large data
+        transfers) will trigger automated security alerts and may result
+        in account suspension pending investigation.
+      - Employees have no expectation of privacy when using corporate VPN.
+
+--------------------------------------------------------------------------------
+
+7. TROUBLESHOOTING COMMON VPN ISSUES
+--------------------------------------
+
+   Issue: GlobalProtect fails to connect.
+   Fix:   Ensure you have an active internet connection. Check that the
+          gateway address is vpn.company.com. Verify your password has
+          not expired at https://identity.company.com.
+
+   Issue: MFA push notification not received.
+   Fix:   Check phone connectivity and the Microsoft Authenticator app.
+          Use the OTP code method as an alternative. Re-enroll MFA if needed.
+
+   Issue: Connected to VPN but cannot access internal resources.
+   Fix:   Disconnect and reconnect. Verify that your VPN access request
+          covers the specific resource. Raise an IT ticket if the issue persists.
+
+   Issue: VPN performance is very slow.
+   Fix:   Disconnect and reconnect. Try connecting from a different network.
+          Report persistent slow VPN performance to the helpdesk.
+
+--------------------------------------------------------------------------------
+
+8. VPN ACCESS REVOCATION
+--------------------------
+   VPN access will be automatically revoked in the following scenarios:
+   - Employee separation (resignation, termination, or end of contract).
+   - Extended leave of absence exceeding 90 days.
+   - Security policy violation detected via VPN monitoring logs.
+   - Manager-requested revocation for any business reason.
+
+--------------------------------------------------------------------------------
+
+9. CONTACT & SUPPORT
+---------------------
+   IT Helpdesk: Ext. 1234 | it-support@company.com
+   IT Ticketing Portal: https://helpdesk.company.com
+   Software Download Portal: https://software.company.com
+   After-Hours Emergency: +91-XXXX-XXXXX
+
+--------------------------------------------------------------------------------
+      This SOP must be reviewed annually by the IT Security team.
+      Violation of VPN usage policies may result in access termination
+      and/or disciplinary action per the Code of Conduct.
+================================================================================

@@ -1,0 +1,7 @@
+.env
+node_modules/
+*.sqlite
+*.db
+.DS_Store
+chroma_data/*.log
+redis_data/

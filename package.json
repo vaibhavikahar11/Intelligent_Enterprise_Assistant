@@ -1,0 +1,37 @@
+{
+  "name": "intelligent-enterprise-assistant",
+  "version": "1.0.0",
+  "description": "RAG-based HR/IT assistant with WhatsApp and web chat",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "ingest": "node scripts/ingest.js",
+    "ask": "node scripts/ask-cli.js",
+    "eval": "node scripts/eval.js",
+    "loadtest": "node scripts/loadtest.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "bad-words": "^3.0.4",
+    "chromadb": "^1.9.2",
+    "chromadb-default-embed": "^2.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.4.1",
+    "pdf-parse": "^1.1.1",
+    "twilio": "^5.3.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "autocannon": "^7.15.0",
+    "ioredis-mock": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

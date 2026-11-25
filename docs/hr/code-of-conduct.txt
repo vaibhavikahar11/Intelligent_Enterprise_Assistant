@@ -1,0 +1,210 @@
+================================================================================
+                     ACME CORPORATION - CODE OF CONDUCT
+                    Document Version: 4.1 | Effective Date: 01-Jan-2024
+                      Maintained by: Human Resources & Legal Department
+================================================================================
+
+1. PURPOSE & SCOPE
+-------------------
+Acme Corporation is committed to maintaining a workplace characterized by
+integrity, respect, transparency, and professionalism. This Code of Conduct
+applies to all employees, contractors, consultants, interns, and anyone acting
+on behalf of Acme Corporation, regardless of location, role, or seniority.
+Adherence to this Code is a condition of employment.
+
+--------------------------------------------------------------------------------
+
+2. PROFESSIONAL BEHAVIOR & WORKPLACE STANDARDS
+------------------------------------------------
+   - Employees are expected to conduct themselves in a professional,
+     courteous, and respectful manner at all times — with colleagues,
+     clients, vendors, and the public.
+   - Punctuality, reliability, and accountability are core professional
+     expectations.
+   - Constructive collaboration, open communication, and respect for
+     differing perspectives are encouraged.
+   - Employees must not engage in gossip, spreading rumors, or any
+     behavior that undermines team morale or trust.
+   - Workplace disputes must be escalated through appropriate channels
+     (manager, HR) — not through social media or informal channels.
+   - Employees are expected to maintain a clean, organized, and safe
+     working environment.
+
+--------------------------------------------------------------------------------
+
+3. WORKING HOURS
+-----------------
+   - Core Hours: All employees are expected to be available and working
+     between 10:00 AM and 5:00 PM (Monday through Friday).
+   - Flexible Hours: Outside of core hours, employees have flexibility to
+     structure their remaining working hours based on role requirements and
+     manager agreement. Total expected working hours remain 9 hours per day
+     (including a 1-hour break).
+   - Overtime must be pre-approved by the direct manager and is compensated
+     as per the company's overtime policy.
+   - Work-from-home arrangements must be agreed upon in writing with the
+     manager and HR.
+
+--------------------------------------------------------------------------------
+
+4. DRESS CODE
+--------------
+   - Weekdays (Monday through Thursday): Business Casual attire is required.
+     Business casual includes collared shirts, trousers/formal pants,
+     blouses, skirts of appropriate length, and closed-toe shoes.
+   - Casual Fridays: Employees may dress casually on Fridays. Acceptable
+     casual wear includes jeans (without tears/rips), polo shirts, and
+     clean sneakers. Shorts, flip-flops, and loungewear are not permitted
+     even on Casual Fridays.
+   - Client-facing days: Business formal or as specified by the department head.
+   - Clothing with offensive graphics, slogans, or branding that conflicts
+     with company values is never acceptable.
+
+--------------------------------------------------------------------------------
+
+5. ANTI-HARASSMENT & NON-DISCRIMINATION POLICY
+------------------------------------------------
+   - Acme Corporation maintains a zero-tolerance policy toward harassment,
+     bullying, discrimination, or intimidation in any form.
+   - Harassment includes: verbal abuse, offensive jokes, unwanted physical
+     contact, sexual harassment, threatening behavior, and cyberbullying.
+   - Discrimination based on gender, age, religion, caste, race, disability,
+     sexual orientation, nationality, or marital status is strictly prohibited.
+   - Any employee who experiences or witnesses harassment must report it
+     to HR at hr@company.com or via the anonymous ethics hotline.
+   - All complaints will be investigated promptly, confidentially, and
+     impartially. Retaliation against a complainant is itself a serious
+     violation of this policy.
+   - The company constitutes an Internal Complaints Committee (ICC) per the
+     POSH Act, 2013, for handling sexual harassment complaints.
+
+--------------------------------------------------------------------------------
+
+6. CONFIDENTIALITY & DATA PROTECTION
+--------------------------------------
+   - Employees have access to confidential information including trade secrets,
+     client data, financial data, employee records, and product roadmaps.
+   - All such information must be treated as strictly confidential and must
+     not be disclosed to unauthorized individuals inside or outside the company.
+   - Confidentiality obligations extend beyond the term of employment.
+     Employees remain bound by NDAs signed at onboarding even after separation.
+   - Employees must not use confidential company information for personal gain.
+   - Company data must be stored only on approved systems; use of personal
+     cloud storage (Google Drive, Dropbox, etc.) for company data is prohibited.
+   - Any data breach or suspected leak must be reported to the IT Security
+     team immediately at security@company.com.
+
+--------------------------------------------------------------------------------
+
+7. SOCIAL MEDIA GUIDELINES
+----------------------------
+   - Employees may use personal social media but must not post confidential
+     company information, internal communications, financial data, or
+     any content that could disparage the company, its clients, or colleagues.
+   - When identifying oneself as an employee of Acme Corporation online,
+     posts must include a disclaimer that views are personal, not the company's.
+   - Do not share unreleased products, earnings data, litigation matters,
+     or internal strategic plans on any social media platform.
+   - Engaging in public debates or confrontational interactions that could
+     embarrass the company is prohibited.
+   - Monitoring of publicly visible social media may occur as part of the
+     company's reputation management program.
+
+--------------------------------------------------------------------------------
+
+8. CONFLICT OF INTEREST
+------------------------
+   - Employees must disclose any situation where personal interests could
+     conflict — or appear to conflict — with the interests of the company.
+   - Examples include: owning equity in a competitor, having a relative
+     employed by a key vendor, or receiving personal benefits from suppliers.
+   - Conflict of interest disclosures must be submitted to HR and Legal
+     using the COI Disclosure Form on the HR portal within 7 days of
+     the conflict arising.
+   - Failure to disclose a known conflict of interest is a disciplinary offense.
+   - Employees involved in vendor selection, procurement, or contracting must
+     declare all associations with potential vendors.
+
+--------------------------------------------------------------------------------
+
+9. GIFTS & ENTERTAINMENT POLICY
+---------------------------------
+   - Accepting gifts from clients, vendors, or external parties is permitted
+     only within defined limits.
+   - Gifts with a total value EXCEEDING Rs 2,000 (two thousand) MUST be
+     declared to the employee's manager and the Compliance team within
+     5 business days of receipt.
+   - Non-declared gifts above Rs 2,000 must be returned or surrendered to
+     the company.
+   - Cash gifts, gift cards equivalent to cash, and gifts from parties
+     involved in pending procurement decisions are NEVER acceptable.
+   - Business entertainment (meals, events) with clients is permitted when
+     reasonable and recorded on the expense report.
+
+--------------------------------------------------------------------------------
+
+10. WHISTLEBLOWER PROTECTION
+------------------------------
+   - Acme Corporation encourages employees to report unethical behavior,
+     fraud, safety violations, or policy breaches without fear of retaliation.
+   - Reports can be made to: ethics@company.com or via the anonymous
+     whistleblower hotline: 1800-XXX-XXXX.
+   - The identity of the whistleblower will be kept confidential to the
+     maximum extent possible.
+   - Retaliation against a whistleblower — including demotion, termination,
+     harassment, or adverse treatment — is a serious violation and will
+     itself be investigated and penalized.
+   - False reports made in bad faith may result in disciplinary action
+     against the reporting party.
+
+--------------------------------------------------------------------------------
+
+11. DISCIPLINARY PROCESS
+--------------------------
+   Violations of this Code of Conduct will be addressed through a structured
+   disciplinary process:
+
+   Step 1 — VERBAL WARNING:
+      For minor first-time violations. The manager formally documents
+      the discussion. Employee is counseled on expected behavior.
+
+   Step 2 — WRITTEN WARNING:
+      For repeated minor violations or a moderate first-time violation.
+      Issued in writing, placed in the employee's personnel file.
+      Improvement expectations and timelines are defined.
+
+   Step 3 — SUSPENSION:
+      For serious violations or repeated misconduct after written warning.
+      Employee may be suspended without pay for 1–15 days pending
+      investigation or as a disciplinary measure.
+
+   Step 4 — TERMINATION:
+      For gross misconduct, fraud, harassment, data theft, or failure to
+      improve after prior disciplinary steps. Employment is ended immediately.
+      Termination for cause may impact settlement benefits.
+
+   Note: Depending on the severity, the company reserves the right to
+   skip earlier steps and proceed directly to suspension or termination.
+
+--------------------------------------------------------------------------------
+
+12. COMPLIANCE & ACKNOWLEDGMENT
+---------------------------------
+   - All employees must acknowledge reading and understanding this Code of
+     Conduct during onboarding and upon each annual renewal.
+   - Questions about the applicability of this Code to specific situations
+     should be directed to HR or the Legal/Compliance team.
+
+--------------------------------------------------------------------------------
+
+13. CONTACT
+-----------
+   HR Department: hr@company.com | Ext. 2000
+   Legal / Compliance: legal@company.com | Ext. 2500
+   Ethics Hotline: ethics@company.com | 1800-XXX-XXXX
+   HR Portal: https://hr.company.com
+
+--------------------------------------------------------------------------------
+      This Code of Conduct supersedes all prior versions.
+      Non-compliance may result in disciplinary action up to termination.
+================================================================================

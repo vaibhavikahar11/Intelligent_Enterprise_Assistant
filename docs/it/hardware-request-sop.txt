@@ -1,0 +1,187 @@
+================================================================================
+                    ACME CORPORATION - IT STANDARD OPERATING PROCEDURE
+                              HARDWARE REQUEST & ASSET MANAGEMENT
+                    Document Version: 1.6 | Effective Date: 01-Jan-2024
+                         Maintained by: IT Operations & Asset Management Team
+================================================================================
+
+1. PURPOSE
+----------
+This SOP defines the process for requesting, receiving, managing, and returning
+IT hardware assets at Acme Corporation. It applies to all employees requiring
+standard or specialized computing equipment, and establishes accountability for
+company-owned hardware throughout the asset lifecycle.
+
+All hardware assigned to employees remains the property of Acme Corporation
+and must be handled responsibly, returned in good condition, and accounted for
+at all times.
+
+--------------------------------------------------------------------------------
+
+2. HARDWARE REQUEST PORTAL
+----------------------------
+   - All hardware requests must be submitted via the IT Hardware Request Portal:
+     URL: https://it-requests.company.com
+   - Log in with your corporate credentials.
+   - Select "New Hardware Request" and fill in all required fields.
+   - Hardware requests submitted via email or verbal communication will
+     NOT be processed without a corresponding portal ticket.
+
+--------------------------------------------------------------------------------
+
+3. STANDARD EQUIPMENT LIST
+----------------------------
+   The following constitute standard equipment that employees may request
+   based on role eligibility:
+
+   a) Laptop (Windows or macOS based on role requirement)
+   b) Docking Station (for office desk setups)
+   c) External Monitor (24" standard; 27" for design/development roles)
+   d) Keyboard (wired or wireless)
+   e) Mouse (wired or wireless)
+   f) Headset (for contact center or designated remote employees)
+   g) Laptop bag / backpack (for field/remote employees)
+
+   Non-standard items (e.g., dual monitors, ergonomic chairs, drawing tablets,
+   specialized peripherals) require additional justification and approval.
+
+--------------------------------------------------------------------------------
+
+4. LAPTOP REFRESH CYCLE
+------------------------
+   - Standard Laptop Refresh Cycle: Every 3 (three) years of service.
+   - Laptops in service for 3 or more years are eligible for hardware refresh.
+   - The IT Asset Management team will proactively contact employees
+     approaching their refresh eligibility date.
+   - Early refresh requests (before 3 years) require documented justification
+     (e.g., severe performance degradation, hardware failure) and must be
+     approved by the department head and IT Director.
+   - Old hardware is collected by IT during the refresh and is either
+     refurbished, donated, or disposed of in accordance with the company's
+     e-waste policy.
+
+--------------------------------------------------------------------------------
+
+5. APPROVAL PROCESS
+--------------------
+   Step 1: Employee submits hardware request at https://it-requests.company.com.
+   Step 2: Automatic notification is sent to the employee's DIRECT MANAGER
+           for approval. Manager approval is MANDATORY.
+   Step 3: Manager reviews and approves or rejects the request within
+           3 business days. Rejected requests include a reason.
+   Step 4: Approved requests are forwarded to the IT Asset Management team
+           for processing.
+   Step 5: IT confirms availability from stock or initiates procurement.
+   Step 6: Employee is notified with expected delivery date.
+   Step 7: Equipment is delivered; employee signs the Asset Acknowledgment Form.
+
+--------------------------------------------------------------------------------
+
+6. DELIVERY TIMELINES
+-----------------------
+   - Standard Equipment (from standard equipment list):
+     Delivery within 5 to 7 (five to seven) BUSINESS DAYS from manager approval.
+
+   - Custom / Specialized Equipment (non-standard items, special configurations,
+     or items requiring procurement from vendors):
+     Delivery within UP TO 3 (three) WEEKS from manager approval.
+
+   - Urgent requests must be flagged at the time of submission with a business
+     justification. IT will make reasonable efforts to expedite; however,
+     guaranteed SLAs do not apply to urgent requests.
+
+--------------------------------------------------------------------------------
+
+7. EQUIPMENT ISSUANCE & ASSET TRACKING
+----------------------------------------
+   - All hardware is tagged with a unique Asset ID barcode upon issuance.
+   - The employee must sign an Asset Acknowledgment Form confirming:
+     a) Receipt of the equipment in good working condition.
+     b) Understanding that the equipment is company property.
+     c) Agreement to return the equipment upon separation or request.
+   - Asset records are maintained in the IT Asset Management System.
+   - Employees must report any change in equipment location (e.g., permanent
+     WFH, office transfer) to the IT team within 5 business days.
+
+--------------------------------------------------------------------------------
+
+8. EQUIPMENT CARE & RESPONSIBILITY
+------------------------------------
+   - Equipment is company property and must be used responsibly.
+   - Employees are responsible for:
+     a) Physical safety of the equipment in their custody.
+     b) Not lending equipment to family members or unauthorized users.
+     c) Keeping equipment updated with company-mandated OS and security patches.
+     d) Reporting any hardware malfunction promptly via the IT portal.
+   - Equipment must not be modified, disassembled, or used to install
+     unauthorized operating systems.
+
+--------------------------------------------------------------------------------
+
+9. DAMAGE, LOSS & THEFT POLICY
+--------------------------------
+
+   9.1 ACCIDENTAL DAMAGE
+      - FIRST INCIDENT: A single accidental damage incident (e.g., accidental
+        drop, liquid spill) is covered by the company at no cost to the employee,
+        provided the incident is promptly reported.
+      - SUBSEQUENT INCIDENTS: Second and subsequent accidental damage incidents
+        in the same equipment lifecycle may result in partial or full cost recovery
+        from the employee, at management discretion.
+      - Intentional damage is never covered and constitutes a disciplinary offense.
+
+   9.2 LOST EQUIPMENT
+      - Lost or stolen equipment MUST be reported IMMEDIATELY to:
+        a) IT Helpdesk: Ext. 1234 | it-support@company.com
+        b) Corporate Security: security@company.com
+      - A formal incident report must be filed within 24 hours of discovery.
+      - IT will immediately remotely wipe the device (if company-managed) to
+        protect company data.
+      - Theft must also be reported to local law enforcement and an FIR copy
+        submitted to HR and IT.
+      - Loss due to negligence may result in cost recovery from the employee
+        as assessed by the IT Director and HR.
+
+--------------------------------------------------------------------------------
+
+10. SOFTWARE INSTALLATION REQUESTS
+------------------------------------
+   - Requests for software installation are SEPARATE from hardware requests.
+   - Submit software installation requests via: https://helpdesk.company.com
+     Select category: "Software Installation Request."
+   - Standard software is available via the Self-Service Software Portal
+     at https://software.company.com and can be installed without a ticket.
+   - Non-standard or licensed software requires manager approval and
+     IT security review before installation.
+   - Employees must NOT install unauthorized, pirated, or personal software
+     on company hardware.
+
+--------------------------------------------------------------------------------
+
+11. EQUIPMENT RETURN ON SEPARATION
+------------------------------------
+   - ALL company hardware must be returned to IT on or before the last
+     working day of employment.
+   - IT will coordinate equipment collection; employees must ensure all
+     equipment (laptop, docking station, peripherals, accessories, and bags)
+     is returned in working condition.
+   - Final clearance (required for full & final settlement) will not be
+     issued until all IT assets are returned and cleared.
+   - Employees must remove all personal data and sign out of all personal
+     accounts before returning equipment; IT will perform a full wipe post-return.
+
+--------------------------------------------------------------------------------
+
+12. CONTACT & SUPPORT
+-----------------------
+   IT Hardware Requests Portal: https://it-requests.company.com
+   IT Helpdesk: Ext. 1234 | it-support@company.com
+   IT Ticketing Portal: https://helpdesk.company.com
+   IT Asset Management Team: it-assets@company.com
+   Corporate Security (for theft/loss): security@company.com
+
+--------------------------------------------------------------------------------
+      This SOP is subject to annual review by the IT Operations team.
+      Failure to comply with asset management policies may affect
+      final settlement and/or result in disciplinary action.
+================================================================================

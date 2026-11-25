@@ -1,0 +1,175 @@
+================================================================================
+                        ACME CORPORATION - HR LEAVE POLICY
+                    Document Version: 3.2 | Effective Date: 01-Jan-2024
+                     Maintained by: Human Resources Department
+================================================================================
+
+1. PURPOSE
+----------
+This policy outlines the types of leave available to employees, the entitlements,
+procedures for applying, and rules governing leave management at Acme Corporation.
+This policy applies to all full-time employees unless otherwise stated in their
+employment contract.
+
+--------------------------------------------------------------------------------
+
+2. TYPES OF LEAVE AND ENTITLEMENTS
+-----------------------------------
+
+2.1 SICK LEAVE
+   - Entitlement: 12 (twelve) days per calendar year.
+   - Intended for personal illness, medical appointments, or recovery.
+   - A medical certificate from a registered practitioner is required for
+     absences exceeding 3 consecutive days.
+   - CARRY-FORWARD: Sick leaves CANNOT be carried forward to the next year.
+     Any unused sick leave at year-end is FORFEITED and will NOT be credited
+     to the following year under any circumstances.
+   - Sick leave CANNOT be encashed.
+
+2.2 CASUAL LEAVE
+   - Entitlement: 18 (eighteen) days per calendar year.
+   - Intended for personal errands, family obligations, or short personal needs.
+   - Casual leave should ideally not exceed 3 consecutive days; longer
+     absences should be covered under Annual Leave.
+   - CARRY-FORWARD: Casual leaves CANNOT be carried forward to the next year.
+     Unused casual leave at year-end is FORFEITED automatically.
+   - Casual leave CANNOT be encashed.
+
+2.3 ANNUAL LEAVE (EARNED LEAVE)
+   - Entitlement: 21 (twenty-one) days per calendar year.
+   - Accrues at a rate of 1.75 days per completed month of service.
+   - Annual leave is intended for rest, vacation, and personal planning.
+   - Minimum duration: 1 day; can be combined with public holidays.
+   - CARRY-FORWARD: Annual leave CAN be carried forward to the next year,
+     up to a maximum of 15 (fifteen) days. Any balance exceeding 15 days
+     at year-end is automatically forfeited unless approved encashment is
+     applied.
+   - Annual leave CAN be encashed (refer to Section 6).
+
+--------------------------------------------------------------------------------
+
+3. SPECIAL LEAVE CATEGORIES
+-----------------------------
+
+3.1 MATERNITY LEAVE
+   - Entitlement: 26 (twenty-six) weeks of paid maternity leave as per the
+     Maternity Benefit (Amendment) Act, 2017.
+   - Applicable to female employees with at least 80 days of service in the
+     12 months preceding the expected delivery date.
+   - Can commence up to 8 weeks prior to the expected date of delivery.
+   - Applicable for up to 2 surviving children.
+   - Adoption and surrogacy provisions apply as per statutory guidelines.
+
+3.2 PATERNITY LEAVE
+   - Entitlement: 5 (five) days of paid paternity leave.
+   - Must be availed within 30 days of the birth of the child.
+   - Applicable to male employees with at least 1 year of service.
+
+3.3 BEREAVEMENT LEAVE
+   - Entitlement: 3 (three) days of paid bereavement leave for the death
+     of an immediate family member.
+   - Immediate family includes: spouse, parent, parent-in-law, sibling,
+     child, or legal guardian.
+   - Additional days may be granted at the discretion of the department head.
+   - Documentary evidence (death certificate) may be required.
+
+3.4 LEAVE WITHOUT PAY (LWP)
+   - Leave Without Pay may be granted when all applicable paid leave is
+     exhausted and a genuine need exists.
+   - LWP REQUIRES explicit written approval from the Vice President (VP)
+     of the respective department.
+   - LWP may impact annual appraisals, bonuses, and increment eligibility
+     depending on its duration.
+   - Extended LWP of more than 30 days requires HR Director review.
+
+--------------------------------------------------------------------------------
+
+4. LEAVE APPLICATION PROCEDURE
+--------------------------------
+
+4.1 PLANNED LEAVE
+   - All planned leave applications MUST be submitted a minimum of 3 (three)
+     days in advance through the HR portal at: https://hr.company.com
+   - Employees must select the appropriate leave type, specify dates, and
+     provide a brief reason.
+   - Leave is subject to manager approval; approval must be received before
+     the employee proceeds on leave.
+
+4.2 EMERGENCY / UNPLANNED LEAVE
+   - In the event of an emergency, the employee must notify their direct
+     manager within 24 hours of the absence.
+   - Subsequent formal leave application must be filed on the HR portal
+     at https://hr.company.com on the employee's return.
+   - Failure to notify within 24 hours may result in the absence being
+     marked as Leave Without Pay.
+
+4.3 HR PORTAL
+   - All leave requests, approvals, and balances are managed exclusively
+     through the HR portal: https://hr.company.com
+   - Employees are responsible for maintaining accurate leave records.
+   - Leave balance can be checked in real time via the portal.
+
+--------------------------------------------------------------------------------
+
+5. LEAVE APPROVAL HIERARCHY
+-----------------------------
+   Level 1: Direct Manager / Team Lead (up to 5 days)
+   Level 2: Department Head (6 to 15 days)
+   Level 3: HR Director + VP (LWP or leaves exceeding 15 days)
+
+--------------------------------------------------------------------------------
+
+6. LEAVE ENCASHMENT
+---------------------
+   - Only Annual (Earned) Leave can be encashed.
+   - Sick Leave and Casual Leave CANNOT be encashed under any circumstances.
+   - Encashment is calculated at the employee's current basic salary rate.
+   - Formula: (Basic Monthly Salary / 26) × Number of Leave Days Encashed.
+   - Maximum encashment per year is limited to 15 days (the carry-forward cap).
+   - Leave encashment is subject to applicable taxes as per Indian tax law.
+   - Encashment requests must be submitted via the HR portal before December 15
+     of each calendar year.
+
+--------------------------------------------------------------------------------
+
+7. PUBLIC HOLIDAYS
+-------------------
+   - Employees are entitled to all national public holidays as declared by the
+     government.
+   - The HR department publishes the official company holiday list at the
+     beginning of each calendar year via the HR portal.
+   - Working on a public holiday requires prior approval and will be compensated
+     as per the company overtime policy.
+
+--------------------------------------------------------------------------------
+
+8. LEAVE LAPSING & YEAR-END PROCESSING
+----------------------------------------
+   - The leave year runs from January 1 to December 31.
+   - Sick Leave balance: LAPSES COMPLETELY on December 31. No carry-forward.
+   - Casual Leave balance: LAPSES COMPLETELY on December 31. No carry-forward.
+   - Annual Leave balance: Up to 15 days carried forward; excess is forfeited.
+   - Year-end leave processing is automated via the HR portal on January 1.
+
+--------------------------------------------------------------------------------
+
+9. POLICY VIOLATIONS
+---------------------
+   - Misrepresentation of leave reasons may result in disciplinary action.
+   - Unauthorized absence beyond 5 days without notification may lead to
+     termination of employment.
+   - Leave abuse patterns will be addressed through the performance review process.
+
+--------------------------------------------------------------------------------
+
+10. CONTACT
+-----------
+   For queries related to this policy, please contact:
+   HR Department: hr@company.com
+   HR Portal: https://hr.company.com
+   HR Helpdesk: Ext. 2000
+
+--------------------------------------------------------------------------------
+      This policy supersedes all previous leave policy documents.
+      HR reserves the right to amend this policy with 30 days' notice.
+================================================================================

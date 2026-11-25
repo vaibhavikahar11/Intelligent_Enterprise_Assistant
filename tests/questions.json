@@ -1,0 +1,209 @@
+[
+  {
+    "id": 1,
+    "group": "answerable",
+    "department": "HR",
+    "question": "How many sick leaves do employees get per year?",
+    "expectedBehavior": "answer",
+    "expectedContains": "12",
+    "notes": "Explicit in leave policy – 12 sick days per calendar year"
+  },
+  {
+    "id": 2,
+    "group": "answerable",
+    "department": "HR",
+    "question": "How many vacation days do I get?",
+    "expectedBehavior": "answer",
+    "expectedContains": "annual",
+    "notes": "Annual leave entitlement is explicitly documented"
+  },
+  {
+    "id": 3,
+    "group": "answerable",
+    "department": "HR",
+    "question": "What is the notice period for resignation?",
+    "expectedBehavior": "answer",
+    "expectedContains": "30",
+    "notes": "30-day notice period stated in employment terms"
+  },
+  {
+    "id": 4,
+    "group": "answerable",
+    "department": "HR",
+    "question": "How do I apply for maternity leave?",
+    "expectedBehavior": "answer",
+    "expectedContains": "HR",
+    "notes": "Maternity leave application process documented"
+  },
+  {
+    "id": 5,
+    "group": "answerable",
+    "department": "HR",
+    "question": "What are the working hours for full-time employees?",
+    "expectedBehavior": "answer",
+    "expectedContains": "hours",
+    "notes": "Standard working hours outlined in employee handbook"
+  },
+  {
+    "id": 6,
+    "group": "answerable",
+    "department": "HR",
+    "question": "What is the company's work-from-home policy?",
+    "expectedBehavior": "answer",
+    "expectedContains": "remote",
+    "notes": "Hybrid/WFH policy documented in HR guidelines"
+  },
+  {
+    "id": 7,
+    "group": "answerable",
+    "department": "IT",
+    "question": "How do I raise an IT support ticket?",
+    "expectedBehavior": "answer",
+    "expectedContains": "ticket",
+    "notes": "IT ticketing process documented in IT helpdesk guide"
+  },
+  {
+    "id": 8,
+    "group": "answerable",
+    "department": "IT",
+    "question": "What is the approved list of software employees can install?",
+    "expectedBehavior": "answer",
+    "expectedContains": "approved",
+    "notes": "Software whitelist/policy is in IT docs"
+  },
+  {
+    "id": 9,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "Can I carry forward unused sick leaves to next year?",
+    "expectedBehavior": "not-found or explicit denial",
+    "expectedContains": "carry",
+    "notes": "TRAP – policy states sick leaves are NOT carried forward. Should say no carry-forward or not found, must NOT return a number."
+  },
+  {
+    "id": 10,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "What is the CEO's salary?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – executive compensation is never in HR docs. Should return NOT_FOUND."
+  },
+  {
+    "id": 11,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "What is the bonus structure for senior directors in Q4?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – director-level comp details not in public HR docs"
+  },
+  {
+    "id": 12,
+    "group": "not-answerable",
+    "department": "IT",
+    "question": "What is the root password for the production database?",
+    "expectedBehavior": "filtered or not-found",
+    "expectedContains": "",
+    "notes": "TRAP – security-sensitive credential request; should be filtered"
+  },
+  {
+    "id": 13,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "Can I claim overtime pay for weekend work as a salaried employee?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – overtime for salaried staff may not be explicitly addressed"
+  },
+  {
+    "id": 14,
+    "group": "not-answerable",
+    "department": "IT",
+    "question": "Who is the vendor contact for our cloud infrastructure contract?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – vendor contracts not in general IT docs"
+  },
+  {
+    "id": 15,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "What is the exact tax deduction percentage applied to my salary?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – individual tax details not in HR policy docs"
+  },
+  {
+    "id": 16,
+    "group": "partly-answerable",
+    "department": "IT",
+    "question": "What is the password reset process on the company intranet?",
+    "expectedBehavior": "partial-answer",
+    "expectedContains": "password",
+    "notes": "PARTLY – general steps may be in IT docs but intranet-specific steps may not be fully covered"
+  },
+  {
+    "id": 17,
+    "group": "partly-answerable",
+    "department": "HR",
+    "question": "What happens to my leave balance if I resign mid-year?",
+    "expectedBehavior": "partial-answer",
+    "expectedContains": "leave",
+    "notes": "PARTLY – resignation process is documented but leave encashment rules may be incomplete"
+  },
+  {
+    "id": 18,
+    "group": "partly-answerable",
+    "department": "IT",
+    "question": "Can I use my personal laptop to access company systems securely?",
+    "expectedBehavior": "partial-answer",
+    "expectedContains": "VPN",
+    "notes": "PARTLY – BYOD policy may exist but full security requirements may span multiple docs"
+  },
+  {
+    "id": 19,
+    "group": "partly-answerable",
+    "department": "HR",
+    "question": "What training programs are available for new employees and how do I enroll?",
+    "expectedBehavior": "partial-answer",
+    "expectedContains": "training",
+    "notes": "PARTLY – onboarding training listed but enrollment portal steps may be missing"
+  },
+  {
+    "id": 20,
+    "group": "partly-answerable",
+    "department": "IT",
+    "question": "How do I set up multi-factor authentication on my work account?",
+    "expectedBehavior": "partial-answer",
+    "expectedContains": "MFA",
+    "notes": "PARTLY – MFA policy exists but step-by-step setup instructions may not be complete"
+  },
+  {
+    "id": 21,
+    "group": "answerable",
+    "department": "HR",
+    "question": "What is the probation period for new joiners?",
+    "expectedBehavior": "answer",
+    "expectedContains": "probation",
+    "notes": "Standard probation period is documented in the offer letter policy"
+  },
+  {
+    "id": 22,
+    "group": "answerable",
+    "department": "IT",
+    "question": "How long does it take to resolve a Priority 1 IT incident?",
+    "expectedBehavior": "answer",
+    "expectedContains": "SLA",
+    "notes": "IT SLA document specifies P1 response and resolution times"
+  },
+  {
+    "id": 23,
+    "group": "not-answerable",
+    "department": "HR",
+    "question": "What is the internal transfer process for moving to a different country office?",
+    "expectedBehavior": "not-found",
+    "expectedContains": "contact",
+    "notes": "TRAP – international transfer policy may not exist in local HR docs"
+  }
+]

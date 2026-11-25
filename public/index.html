@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IEA – Intelligent Enterprise Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --surface:      #1a1d27;
+      --surface2:     #232636;
+      --surface3:     #2a2f47;
+      --border:       #2e3250;
+      --accent:       #6366f1;
+      --accent-light: #818cf8;
+      --text:         #e2e8f0;
+      --text-muted:   #94a3b8;
+      --user-bubble:  #6366f1;
+      --bot-bubble:   #1e2234;
+      --success:      #10b981;
+      --warning:      #f59e0b;
+      --error:        #ef4444;
+      --trace-w:      360px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Left sidebar ───────────────────────────────────────────────────── */
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 14px;
+      gap: 18px;
+      flex-shrink: 0;
+    }
+    .logo { display:flex; align-items:center; gap:10px; font-size:1.1rem; font-weight:700; color:var(--accent-light); }
+    .logo-icon { width:34px;height:34px;background:var(--accent);border-radius:9px;display:grid;place-items:center;font-size:1rem; }
+    .section-label { font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:5px; }
+    select {
+      width:100%;background:var(--surface2);border:1px solid var(--border);
+      border-radius:8px;color:var(--text);padding:9px 11px;font-size:.88rem;
+      cursor:pointer;outline:none;appearance:none;
+    }
+    select:focus { border-color:var(--accent); }
+    .status-indicator { display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-muted);padding:8px 11px;background:var(--surface2);border-radius:8px; }
+    .status-dot { width:8px;height:8px;border-radius:50%;background:var(--error);flex-shrink:0;transition:background .3s; }
+    .status-dot.connected   { background:var(--success); }
+    .status-dot.reconnecting{ background:var(--warning); }
+    .stat-row { display:flex;flex-direction:column;gap:7px; }
+    .stat { font-size:.78rem;color:var(--text-muted); }
+    .stat span { color:var(--text);font-weight:600; }
+    .clear-btn {
+      margin-top:auto;background:var(--surface2);border:1px solid var(--border);
+      border-radius:8px;color:var(--text-muted);padding:9px;cursor:pointer;
+      font-size:.82rem;transition:all .2s;
+    }
+    .clear-btn:hover { border-color:var(--error);color:var(--error); }
+
+    /* ── Chat area ──────────────────────────────────────────────────────── */
+    .chat-area { flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0; }
+    .chat-header {
+      padding:14px 22px;background:var(--surface);border-bottom:1px solid var(--border);
+      font-size:.95rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;
+    }
+    .chat-header small { display:block;font-size:.72rem;color:var(--text-muted);font-weight:400;margin-top:2px; }
+    .trace-toggle {
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      color:var(--text-muted);padding:6px 12px;cursor:pointer;font-size:.78rem;
+      white-space:nowrap;transition:all .2s;
+    }
+    .trace-toggle:hover, .trace-toggle.active { border-color:var(--accent);color:var(--accent-light); }
+    .messages {
+      flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;
+    }
+    .messages::-webkit-scrollbar { width:4px; }
+    .messages::-webkit-scrollbar-track { background:transparent; }
+    .messages::-webkit-scrollbar-thumb { background:var(--border);border-radius:2px; }
+
+    .msg-row { display:flex;flex-direction:column;max-width:78%; }
+    .msg-row.user { align-self:flex-end;align-items:flex-end; }
+    .msg-row.bot  { align-self:flex-start;align-items:flex-start; }
+    .bubble {
+      padding:11px 15px;border-radius:16px;font-size:.88rem;line-height:1.65;
+      word-break:break-word;white-space:pre-wrap;
+    }
+    .msg-row.user .bubble { background:var(--user-bubble);color:#fff;border-bottom-right-radius:4px; }
+    .msg-row.bot  .bubble { background:var(--bot-bubble);border:1px solid var(--border);border-bottom-left-radius:4px; }
+    .meta { display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap; }
+    .badge {
+      font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:100px;
+      text-transform:uppercase;letter-spacing:.06em;
+    }
+    .badge.validated  { background:#1e3a5f;color:#60a5fa; }
+    .badge.cached     { background:#064e3b;color:#34d399; }
+    .badge.cached-sem { background:#054a38;color:#6ee7b7; }
+    .badge.error      { background:#450a0a;color:#fca5a5; }
+    .badge.filtered   { background:#422006;color:#fdba74; }
+    .badge.not-found  { background:#312e81;color:#a5b4fc; }
+    .sources { font-size:.7rem;color:var(--text-muted);margin-top:3px; }
+    .latency-inline { font-size:.66rem;color:var(--text-muted); }
+
+    .typing-bubble {
+      display:flex;align-items:center;gap:5px;padding:11px 15px;
+      background:var(--bot-bubble);border:1px solid var(--border);
+      border-radius:16px;border-bottom-left-radius:4px;width:fit-content;
+    }
+    .typing-dot { width:7px;height:7px;border-radius:50%;background:var(--text-muted);animation:bounce 1.2s infinite; }
+    .typing-dot:nth-child(2) { animation-delay:.2s; }
+    .typing-dot:nth-child(3) { animation-delay:.4s; }
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }
+
+    .input-area {
+      padding:14px 22px;background:var(--surface);border-top:1px solid var(--border);
+      display:flex;gap:10px;align-items:flex-end;
+    }
+    .input-wrap { flex:1;position:relative; }
+    textarea {
+      width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:11px;
+      color:var(--text);padding:11px 46px 11px 14px;font-size:.88rem;font-family:inherit;
+      resize:none;outline:none;line-height:1.5;max-height:120px;transition:border-color .2s;
+    }
+    textarea:focus { border-color:var(--accent); }
+    textarea::placeholder { color:var(--text-muted); }
+    .char-count { position:absolute;right:11px;bottom:9px;font-size:.63rem;color:var(--text-muted);pointer-events:none; }
+    .char-count.warn { color:var(--warning); }
+    .char-count.over { color:var(--error); }
+    .send-btn {
+      background:var(--accent);border:none;border-radius:11px;color:#fff;
+      width:46px;height:46px;cursor:pointer;display:grid;place-items:center;
+      font-size:1.2rem;flex-shrink:0;transition:background .2s,transform .1s;
+    }
+    .send-btn:hover:not(:disabled) { background:var(--accent-light); }
+    .send-btn:active:not(:disabled){ transform:scale(.93); }
+    .send-btn:disabled { opacity:.4;cursor:not-allowed; }
+
+    .welcome { display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:11px;color:var(--text-muted);text-align:center;padding:22px; }
+    .welcome-icon { font-size:2.8rem; }
+    .welcome h2 { font-size:1.15rem;color:var(--text); }
+    .welcome p  { font-size:.83rem;max-width:360px;line-height:1.6; }
+    .example-questions { display:flex;flex-direction:column;gap:7px;margin-top:7px;width:100%;max-width:400px; }
+    .example-q {
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      padding:8px 13px;font-size:.8rem;cursor:pointer;text-align:left;
+      color:var(--text);transition:border-color .2s;font-family:inherit;
+    }
+    .example-q:hover { border-color:var(--accent); }
+
+    /* ── Trace panel ────────────────────────────────────────────────────── */
+    .trace-panel {
+      width: var(--trace-w);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+      transition: width .25s ease;
+    }
+    .trace-panel.collapsed { width: 0; border-left: none; }
+
+    .trace-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .trace-header .total-latency {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--accent-light);
+      font-style: normal;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .trace-body { flex:1;overflow-y:auto;padding:14px; }
+    .trace-body::-webkit-scrollbar { width:3px; }
+    .trace-body::-webkit-scrollbar-thumb { background:var(--border);border-radius:2px; }
+
+    /* Stage checklist */
+    .stage-list { display:flex;flex-direction:column;gap:4px;margin-bottom:14px; }
+    .stage-item {
+      display:flex;align-items:center;gap:9px;padding:7px 10px;
+      border-radius:8px;background:var(--surface2);border:1px solid transparent;
+      font-size:.8rem;transition:border-color .2s,opacity .2s;
+    }
+    .stage-item.running { border-color:var(--warning);animation:pulse-border 1s infinite; }
+    .stage-item.done    { border-color:var(--border); }
+    .stage-item.pass    { border-color:#1a5c3a; }
+    .stage-item.fail    { border-color:var(--error); }
+    .stage-item.blocked { border-color:var(--error);opacity:.7; }
+    .stage-item.hit     { border-color:#0d4a30; }
+    .stage-item.miss    { opacity:.6; }
+    .stage-item.empty   { border-color:var(--warning); }
+    @keyframes pulse-border { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+    .stage-icon { font-size:1rem;width:18px;text-align:center;flex-shrink:0; }
+    .stage-info { flex:1;min-width:0; }
+    .stage-name { font-weight:600;color:var(--text); }
+    .stage-detail { font-size:.7rem;color:var(--text-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .stage-ms { font-size:.7rem;color:var(--accent-light);flex-shrink:0;font-variant-numeric:tabular-nums; }
+
+    /* Latency bar */
+    .latency-section { margin-bottom:14px; }
+    .latency-bar { height:8px;border-radius:4px;background:var(--surface3);overflow:hidden;display:flex; }
+    .latency-segment {
+      height:100%;border-radius:0;transition:width .4s ease;
+      position:relative;
+    }
+    .seg-embedding  { background:#6366f1; }
+    .seg-retrieval  { background:#8b5cf6; }
+    .seg-generation { background:#ec4899; }
+    .seg-validation { background:#f59e0b; }
+    .seg-other      { background:#334155; }
+    .latency-legend { display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:7px; }
+    .legend-item { display:flex;align-items:center;gap:4px;font-size:.67rem;color:var(--text-muted); }
+    .legend-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+
+    /* Retrieved chunks */
+    .trace-section-title {
+      font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+      color:var(--text-muted);margin-bottom:7px;margin-top:2px;
+    }
+    .chunk-list { display:flex;flex-direction:column;gap:7px;margin-bottom:14px; }
+    .chunk-card {
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      padding:9px 11px;font-size:.75rem;
+    }
+    .chunk-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:5px; }
+    .chunk-org { font-weight:700;color:var(--accent-light);font-size:.72rem; }
+    .chunk-score {
+      font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:100px;
+      background:var(--surface3);color:var(--success);
+    }
+    .chunk-score.low { color:var(--warning); }
+    .chunk-file { color:var(--text-muted);font-size:.68rem;margin-bottom:4px; }
+    .chunk-preview { color:var(--text);line-height:1.5;font-size:.73rem;opacity:.85; }
+
+    /* Validator claim table */
+    .claim-table { margin-bottom:14px; }
+    .claim-row {
+      display:flex;gap:8px;padding:7px 10px;border-radius:7px;
+      background:var(--surface2);border:1px solid var(--border);
+      margin-bottom:5px;font-size:.74rem;line-height:1.45;
+    }
+    .claim-row.supported   { border-color:#1a5c3a; }
+    .claim-row.unsupported { border-color:#5c1a1a; }
+    .claim-verdict { font-size:.9rem;flex-shrink:0;width:16px; }
+    .claim-body { flex:1;min-width:0; }
+    .claim-text { color:var(--text);margin-bottom:3px; }
+    .claim-quote {
+      color:var(--text-muted);font-style:italic;font-size:.68rem;
+      border-left:2px solid var(--border);padding-left:7px;margin-top:3px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .claim-quote.none { color:#5c1a1a;font-style:normal;border-left-color:#5c1a1a; }
+
+    /* Cached banner */
+    .cache-banner {
+      background:#0a2a1a;border:1px solid #1a5c3a;border-radius:8px;
+      padding:9px 13px;font-size:.78rem;color:#34d399;
+      display:flex;align-items:center;gap:8px;margin-bottom:14px;
+    }
+    .cache-banner .type { opacity:.7;font-size:.7rem; }
+
+    /* streaming cursor */
+    .stream-cursor { display:inline-block;width:2px;height:1em;background:var(--accent-light);animation:blink .7s infinite;vertical-align:text-bottom;margin-left:1px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  </style>
+</head>
+<body>
+
+<!-- ── Left Sidebar ──────────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">🤖</div>
+    <div>IEA</div>
+  </div>
+
+  <div>
+    <div class="section-label">Department</div>
+    <select id="dept-select">
+      <option value="HR">👤 HR</option>
+      <option value="IT">💻 IT</option>
+    </select>
+  </div>
+
+  <div>
+    <div class="section-label">Connection</div>
+    <div class="status-indicator">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Connecting…</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">Session Stats</div>
+    <div class="stat-row">
+      <div class="stat">Asked: <span id="stat-total">0</span></div>
+      <div class="stat">Cached: <span id="stat-cached">0</span></div>
+      <div class="stat">Avg latency: <span id="stat-latency">—</span></div>
+    </div>
+  </div>
+
+  <button class="clear-btn" id="clear-btn">🗑 Clear chat</button>
+</aside>
+
+<!-- ── Chat area ─────────────────────────────────────────────────────────────── -->
+<main class="chat-area">
+  <div class="chat-header">
+    <div>
+      Intelligent Enterprise Assistant
+      <small>RAG-powered answers from HR &amp; IT policy documents</small>
+    </div>
+    <button class="trace-toggle" id="trace-toggle">⚡ Pipeline Trace</button>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">📚</div>
+      <h2>How can I help you today?</h2>
+      <p>Select your department and ask a question about company policies or IT procedures.</p>
+      <div class="example-questions">
+        <button class="example-q" data-q="What benefits does 37signals offer employees?" data-dept="HR">💡 What benefits does 37signals offer employees?</button>
+        <button class="example-q" data-q="What are the leave rules under Central Civil Services?" data-dept="HR">💡 What are the leave rules under Central Civil Services?</button>
+        <button class="example-q" data-q="How do I reset my password?" data-dept="IT">💡 How do I reset my password?</button>
+        <button class="example-q" data-q="How do I request VPN access?" data-dept="IT">💡 How do I request VPN access?</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea id="question-input" placeholder="Type your question… (Enter to send, Shift+Enter for new line)" rows="1" maxlength="1000"></textarea>
+      <div class="char-count" id="char-count">0 / 1000</div>
+    </div>
+    <button class="send-btn" id="send-btn" title="Send (Enter)">↑</button>
+  </div>
+</main>
+
+<!-- ── Trace panel ───────────────────────────────────────────────────────────── -->
+<aside class="trace-panel collapsed" id="trace-panel">
+  <div class="trace-header">
+    Pipeline Trace
+    <span class="total-latency" id="trace-latency"></span>
+  </div>
+  <div class="trace-body" id="trace-body">
+    <p style="font-size:.78rem;color:var(--text-muted);text-align:center;padding-top:30px">
+      Send a question to see the pipeline trace.
+    </p>
+  </div>
+</aside>
+
+<script>
+  /* ── WebSocket URL ──────────────────────────────────────────────────────── */
+  const WS_URL = (() => {
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${proto}//${location.host}/ws`;
+  })();
+
+  /* ── State ──────────────────────────────────────────────────────────────── */
+  let ws = null, reconnectTimer = null, reconnectDelay = 2000, isBusy = false;
+  const stats = { total: 0, cached: 0, totalLatency: 0 };
+  let traceOpen = false;
+  let streamingBubble = null;   // <div class="bubble"> currently receiving tokens
+  let streamingRow    = null;   // the .msg-row wrapper
+
+  /* Timing accumulators for latency bar */
+  const timings = { embedding: 0, retrieval: 0, generation: 0, validation: 0 };
+  const stageStart = {};
+
+  /* ── DOM refs ───────────────────────────────────────────────────────────── */
+  const messagesEl  = document.getElementById('messages');
+  const inputEl     = document.getElementById('question-input');
+  const sendBtn     = document.getElementById('send-btn');
+  const deptSelect  = document.getElementById('dept-select');
+  const statusDot   = document.getElementById('status-dot');
+  const statusText  = document.getElementById('status-text');
+  const charCount   = document.getElementById('char-count');
+  const welcomeEl   = document.getElementById('welcome');
+  const tracePanel  = document.getElementById('trace-panel');
+  const traceToggle = document.getElementById('trace-toggle');
+  const traceBody   = document.getElementById('trace-body');
+  const traceLatEl  = document.getElementById('trace-latency');
+
+  /* ── Stage meta ─────────────────────────────────────────────────────────── */
+  const STAGES = [
+    { key: 'filter',     label: 'Input Filter',    icon: '🛡' },
+    { key: 'cache',      label: 'Cache Lookup',    icon: '⚡' },
+    { key: 'embedding',  label: 'Embedding',       icon: '🔢' },
+    { key: 'retrieval',  label: 'Vector Search',   icon: '🔍' },
+    { key: 'generation', label: 'LLM Generation',  icon: '🧠' },
+    { key: 'validation', label: 'Validation',      icon: '✅' },
+    { key: 'reply',      label: 'Reply',           icon: '💬' },
+  ];
+
+  /* ── WebSocket lifecycle ────────────────────────────────────────────────── */
+  function connect() {
+    ws = new WebSocket(WS_URL);
+    ws.onopen    = ()  => { setStatus('Connected', 'connected'); reconnectDelay = 2000; clearTimeout(reconnectTimer); };
+    ws.onclose   = ()  => { setStatus(`Reconnecting in ${reconnectDelay/1000}s…`, 'reconnecting'); reconnectTimer = setTimeout(() => { reconnectDelay = Math.min(reconnectDelay*1.5, 30000); connect(); }, reconnectDelay); };
+    ws.onerror   = ()  => setStatus('Connection error', '');
+    ws.onmessage = (e) => { let m; try { m = JSON.parse(e.data); } catch { return; } handleMsg(m); };
+  }
+  function setStatus(t, s) { statusText.textContent = t; statusDot.className = 'status-dot' + (s ? ` ${s}` : ''); }
+
+  /* ── Message handler ────────────────────────────────────────────────────── */
+  function handleMsg(msg) {
+    switch (msg.type) {
+      case 'welcome': break;
+
+      case 'stage':
+        handleStage(msg);
+        break;
+
+      case 'token':
+        handleToken(msg.text);
+        break;
+
+      case 'answer':
+        finaliseAnswer(msg);
+        updateStats(msg);
+        setSending(false);
+        break;
+
+      case 'error':
+        finaliseStreamingBubble();
+        removeTyping();
+        addBotMessage({ answer: '⚠ ' + msg.message, verdict: 'ERROR', sources: [], cacheHit: 'none' });
+        setSending(false);
+        break;
+    }
+  }
+
+  /* ── Trace: stage events ────────────────────────────────────────────────── */
+  function handleStage(ev) {
+    const { stage, status, durationMs, detail, chunks, claims } = ev;
+
+    // Record timing for latency bar
+    if (status === 'running') stageStart[stage] = durationMs;
+    if (['done','pass','fail','hit','miss','empty','blocked','sent','error'].includes(status)) {
+      const elapsed = durationMs - (stageStart[stage] || 0);
+      if (timings[stage] !== undefined) timings[stage] = elapsed;
+    }
+
+    // Update checklist row
+    updateStageRow(stage, status, durationMs, detail);
+
+    // Extra sections
+    if (stage === 'cache' && status === 'hit') {
+      renderCacheBanner(detail);
+    }
+    if (stage === 'retrieval' && status === 'done' && chunks) {
+      renderChunks(chunks);
+    }
+    if (stage === 'validation' && (status === 'pass' || status === 'fail') && claims) {
+      renderClaims(claims);
+    }
+    if (stage === 'reply') {
+      renderLatencyBar(durationMs);
+      traceLatEl.textContent = durationMs ? `${durationMs} ms` : '';
+    }
+  }
+
+  /* ── Trace: initialise panel for a new question ─────────────────────────── */
+  function initTrace() {
+    // Reset timings
+    Object.keys(timings).forEach(k => timings[k] = 0);
+    Object.keys(stageStart).forEach(k => delete stageStart[k]);
+    traceLatEl.textContent = '';
+
+    // Build fresh stage list
+    traceBody.innerHTML = `<div class="stage-list" id="stage-list">
+      ${STAGES.map(s => `
+        <div class="stage-item" id="si-${s.key}">
+          <div class="stage-icon">${s.icon}</div>
+          <div class="stage-info">
+            <div class="stage-name">${s.label}</div>
+            <div class="stage-detail" id="sd-${s.key}">—</div>
+          </div>
+          <div class="stage-ms" id="sm-${s.key}"></div>
+        </div>`).join('')}
+    </div>
+    <div id="cache-banner-slot"></div>
+    <div id="latency-bar-slot"></div>
+    <div id="chunks-slot"></div>
+    <div id="claims-slot"></div>`;
+  }
+
+  function updateStageRow(stage, status, ms, detail) {
+    const row = document.getElementById(`si-${stage}`);
+    const det = document.getElementById(`sd-${stage}`);
+    const msEl = document.getElementById(`sm-${stage}`);
+    if (!row) return;
+
+    const statusIcon = {
+      running: '⏳', done: '✓', pass: '✓', fail: '✗',
+      hit: '⚡', miss: '—', empty: '∅', blocked: '🚫',
+      sent: '✓', error: '✗',
+    };
+    row.className = `stage-item ${status}`;
+    if (det && detail) det.textContent = detail;
+    if (msEl && ms != null) msEl.textContent = `${ms}ms`;
+    // update icon
+    const iconEl = row.querySelector('.stage-icon');
+    if (iconEl && statusIcon[status]) {
+      const base = { running:'⏳',done:'✓',pass:'✓',fail:'✗',hit:'⚡',miss:'—',empty:'∅',blocked:'🚫',sent:'✓',error:'✗' };
+      iconEl.textContent = base[status] || STAGES.find(s=>s.key===stage)?.icon || '·';
+    }
+  }
+
+  function renderCacheBanner(type) {
+    const slot = document.getElementById('cache-banner-slot');
+    if (!slot) return;
+    slot.innerHTML = `<div class="cache-banner">
+      ⚡ <strong>Cache hit</strong> <span class="type">(${type || 'exact'})</span>
+    </div>`;
+  }
+
+  function renderChunks(chunks) {
+    const slot = document.getElementById('chunks-slot');
+    if (!slot || !chunks.length) return;
+    slot.innerHTML = `<div class="trace-section-title">Retrieved chunks (${chunks.length})</div>
+      <div class="chunk-list">
+        ${chunks.map((c,i) => {
+          const score  = typeof c.score === 'number' ? (c.score*100).toFixed(1) : '—';
+          const isLow  = typeof c.score === 'number' && c.score < 0.65;
+          const org    = esc(c.sourceOrg || '');
+          const file   = esc(c.sourceFile || c.id || '');
+          const prev   = esc((c.text||'').slice(0,160));
+          return `<div class="chunk-card">
+            <div class="chunk-header">
+              <span class="chunk-org">${org || `Chunk ${i+1}`}</span>
+              <span class="chunk-score${isLow?' low':''}">${score}%</span>
+            </div>
+            <div class="chunk-file">${file}</div>
+            <div class="chunk-preview">${prev}…</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  function renderClaims(claims) {
+    const slot = document.getElementById('claims-slot');
+    if (!slot || !claims.length) return;
+    slot.innerHTML = `<div class="trace-section-title">Validator (${claims.length} claims)</div>
+      <div class="claim-table">
+        ${claims.map(c => {
+          const ok = c.supported;
+          return `<div class="claim-row ${ok?'supported':'unsupported'}">
+            <div class="claim-verdict">${ok?'✅':'❌'}</div>
+            <div class="claim-body">
+              <div class="claim-text">${esc(c.claim||'')}</div>
+              ${c.quote
+                ? `<div class="claim-quote">"${esc(c.quote.slice(0,120))}"</div>`
+                : `<div class="claim-quote none">No supporting quote found</div>`}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  function renderLatencyBar(totalMs) {
+    const slot = document.getElementById('latency-bar-slot');
+    if (!slot || !totalMs) return;
+    const pct = (k) => ((timings[k]||0)/totalMs*100).toFixed(1);
+    const other = Math.max(0, totalMs
+      - (timings.embedding||0)
+      - (timings.retrieval||0)
+      - (timings.generation||0)
+      - (timings.validation||0));
+    const otherPct = (other/totalMs*100).toFixed(1);
+
+    slot.innerHTML = `<div class="trace-section-title" style="margin-top:4px">Latency breakdown <span style="color:var(--text);font-weight:600">${totalMs}ms</span></div>
+      <div class="latency-bar">
+        <div class="latency-segment seg-embedding"  style="width:${pct('embedding')}%"  title="Embedding ${timings.embedding}ms"></div>
+        <div class="latency-segment seg-retrieval"  style="width:${pct('retrieval')}%"  title="Retrieval ${timings.retrieval}ms"></div>
+        <div class="latency-segment seg-generation" style="width:${pct('generation')}%" title="Generation ${timings.generation}ms"></div>
+        <div class="latency-segment seg-validation" style="width:${pct('validation')}%" title="Validation ${timings.validation}ms"></div>
+        <div class="latency-segment seg-other"      style="width:${otherPct}%"           title="Other ${other}ms"></div>
+      </div>
+      <div class="latency-legend">
+        ${[
+          ['seg-embedding','Embedding',timings.embedding],
+          ['seg-retrieval','Retrieval',timings.retrieval],
+          ['seg-generation','Generation',timings.generation],
+          ['seg-validation','Validation',timings.validation],
+          ['seg-other','Other',other],
+        ].filter(([,,v])=>v>0).map(([cls,lbl,v])=>
+          `<div class="legend-item"><div class="legend-dot ${cls}"></div>${lbl} ${v}ms</div>`
+        ).join('')}
+      </div>`;
+  }
+
+  /* ── Streaming tokens ───────────────────────────────────────────────────── */
+  function handleToken(text) {
+    if (!streamingBubble) {
+      // Create the bot row + bubble for streaming
+      removeTyping();
+      hideWelcome();
+      streamingRow = document.createElement('div');
+      streamingRow.className = 'msg-row bot';
+      streamingBubble = document.createElement('div');
+      streamingBubble.className = 'bubble';
+      streamingRow.appendChild(streamingBubble);
+      messagesEl.appendChild(streamingRow);
+    }
+    // Remove old cursor, append text, re-add cursor
+    const cursor = streamingBubble.querySelector('.stream-cursor');
+    if (cursor) cursor.remove();
+    streamingBubble.appendChild(document.createTextNode(text));
+    const cur = document.createElement('span');
+    cur.className = 'stream-cursor';
+    streamingBubble.appendChild(cur);
+    scrollBottom();
+  }
+
+  function finaliseStreamingBubble() {
+    if (!streamingBubble) return;
+    const cursor = streamingBubble.querySelector('.stream-cursor');
+    if (cursor) cursor.remove();
+    streamingBubble = null;
+  }
+
+  /* ── Final answer ───────────────────────────────────────────────────────── */
+  function finaliseAnswer(msg) {
+    finaliseStreamingBubble();
+    removeTyping();
+
+    // If streaming already filled the bubble, just append meta + sources
+    // Otherwise render the full answer bubble now
+    if (streamingRow) {
+      appendMeta(streamingRow, msg);
+      streamingRow = null;
+    } else {
+      addBotMessage(msg);
+    }
+    scrollBottom();
+  }
+
+  function appendMeta(row, msg) {
+    const { badgeClass, badgeLabel } = getBadge(msg);
+    const srcHtml = buildSourcesHtml(msg.sources);
+    const msHtml  = msg.latencyMs ? `<span class="latency-inline">${msg.latencyMs} ms</span>` : '';
+    const meta    = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = `<span class="badge ${badgeClass}">${badgeLabel}</span>${msHtml}`;
+    row.appendChild(meta);
+    if (srcHtml) {
+      const src = document.createElement('div');
+      src.className = 'sources';
+      src.innerHTML = srcHtml;
+      row.appendChild(src);
+    }
+  }
+
+  /* ── Message rendering ──────────────────────────────────────────────────── */
+  function getBadge(msg) {
+    const ch = msg.cacheHit || 'none';
+    const vd = msg.verdict  || '';
+    if (ch === 'exact')    return { badgeClass:'cached',     badgeLabel:'⚡ Cached (exact)' };
+    if (ch === 'semantic') return { badgeClass:'cached-sem', badgeLabel:'⚡ Cached (semantic)' };
+    if (vd === 'CACHE_HIT')return { badgeClass:'cached',     badgeLabel:'⚡ Cached' };
+    if (vd === 'FILTERED') return { badgeClass:'filtered',   badgeLabel:'🚫 Filtered' };
+    if (vd === 'NOT_FOUND')return { badgeClass:'not-found',  badgeLabel:'🔍 Not found' };
+    if (vd === 'FAIL' || vd === 'ERROR') return { badgeClass:'error', badgeLabel:'✗ Error' };
+    return { badgeClass:'validated', badgeLabel:'✓ Validated' };
+  }
+
+  function buildSourcesHtml(sources) {
+    if (!sources || !sources.length) return '';
+    const labels = [...new Set(sources.map(s => {
+      const org  = s.sourceOrg  || '';
+      const file = s.sourceFile || s.source || '';
+      return org ? `${org} – ${file}` : file;
+    }).filter(Boolean))];
+    return labels.length ? `📄 ${labels.join(' · ')}` : '';
+  }
+
+  function addBotMessage(msg) {
+    hideWelcome();
+    const row = document.createElement('div');
+    row.className = 'msg-row bot';
+    const { badgeClass, badgeLabel } = getBadge(msg);
+    const srcHtml = buildSourcesHtml(msg.sources);
+    const msHtml  = msg.latencyMs ? `<span class="latency-inline">${msg.latencyMs} ms</span>` : '';
+    row.innerHTML  =
+      `<div class="bubble">${esc(msg.answer || '')}</div>` +
+      `<div class="meta"><span class="badge ${badgeClass}">${badgeLabel}</span>${msHtml}</div>` +
+      (srcHtml ? `<div class="sources">${srcHtml}</div>` : '');
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+
+  function addUserMessage(text) {
+    hideWelcome();
+    const row = document.createElement('div');
+    row.className = 'msg-row user';
+    row.innerHTML = `<div class="bubble">${esc(text)}</div>`;
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+
+  /* ── Typing indicator ───────────────────────────────────────────────────── */
+  function showTyping() {
+    removeTyping();
+    const row = document.createElement('div');
+    row.className = 'msg-row bot'; row.id = 'typing-indicator';
+    row.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+  function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
+
+  /* ── Send ───────────────────────────────────────────────────────────────── */
+  function sendMessage() {
+    const question = inputEl.value.trim();
+    if (!question || isBusy) return;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      addBotMessage({ answer: 'Not connected. Please wait for reconnection.', verdict: 'ERROR', sources: [], cacheHit: 'none' });
+      return;
+    }
+    const department = deptSelect.value;
+    addUserMessage(question);
+    inputEl.value = ''; inputEl.style.height = 'auto'; updateCharCount();
+    setSending(true);
+    streamingBubble = null; streamingRow = null;
+
+    // Init trace panel if open; otherwise show typing indicator
+    if (traceOpen) initTrace();
+    else showTyping();
+
+    ws.send(JSON.stringify({ type: 'ask', question, department }));
+  }
+
+  function setSending(busy) { isBusy = busy; sendBtn.disabled = busy; inputEl.disabled = busy; }
+
+  /* ── Trace toggle ───────────────────────────────────────────────────────── */
+  function toggleTrace() {
+    traceOpen = !traceOpen;
+    tracePanel.classList.toggle('collapsed', !traceOpen);
+    traceToggle.classList.toggle('active', traceOpen);
+  }
+
+  /* ── Stats ──────────────────────────────────────────────────────────────── */
+  function updateStats(msg) {
+    stats.total++;
+    if (msg.cacheHit && msg.cacheHit !== 'none') stats.cached++;
+    if (msg.latencyMs) stats.totalLatency += msg.latencyMs;
+    document.getElementById('stat-total').textContent   = stats.total;
+    document.getElementById('stat-cached').textContent  = stats.cached;
+    document.getElementById('stat-latency').textContent = stats.total > 0 ? `${Math.round(stats.totalLatency/stats.total)} ms` : '—';
+  }
+
+  /* ── Helpers ────────────────────────────────────────────────────────────── */
+  function clearChat() {
+    // Remove all message rows
+    [...messagesEl.querySelectorAll('.msg-row')].forEach(el => el.remove());
+
+    // Reset streaming state
+    streamingBubble = null;
+    streamingRow    = null;
+
+    // Show welcome screen again
+    if (!messagesEl.contains(welcomeEl)) messagesEl.prepend(welcomeEl);
+    welcomeEl.style.display = 'flex';
+
+    // Unblock input (in case a request was mid-flight)
+    isBusy = false;
+    sendBtn.disabled  = false;
+    inputEl.disabled  = false;
+
+    // Reset stats
+    Object.assign(stats, { total: 0, cached: 0, totalLatency: 0 });
+    document.getElementById('stat-total').textContent   = '0';
+    document.getElementById('stat-cached').textContent  = '0';
+    document.getElementById('stat-latency').textContent = '—';
+
+    // Reset trace panel
+    traceBody.innerHTML = '<p style="font-size:.78rem;color:var(--text-muted);text-align:center;padding-top:30px">Send a question to see the pipeline trace.</p>';
+    traceLatEl.textContent = '';
+  }
+
+  function hideWelcome() { welcomeEl.style.display = 'none'; }
+  function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+  function esc(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function setExample(q, dept) { deptSelect.value = dept; inputEl.value = q; updateCharCount(); inputEl.focus(); }
+
+  function updateCharCount() {
+    const len = inputEl.value.length;
+    charCount.textContent = `${len} / 1000`;
+    charCount.className   = 'char-count' + (len > 950 ? ' over' : len > 750 ? ' warn' : '');
+  }
+
+  inputEl.addEventListener('input', () => { inputEl.style.height='auto'; inputEl.style.height=Math.min(inputEl.scrollHeight,120)+'px'; updateCharCount(); });
+  inputEl.addEventListener('keydown', (e) => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  document.getElementById('send-btn').addEventListener('click', sendMessage);
+  document.getElementById('clear-btn').addEventListener('click', clearChat);
+  document.getElementById('trace-toggle').addEventListener('click', toggleTrace);
+
+  // Example question buttons — bind via data attributes
+  document.querySelectorAll('.example-q[data-q]').forEach(btn => {
+    btn.addEventListener('click', () => setExample(btn.dataset.q, btn.dataset.dept));
+  });
+
+  connect();
+</script>
+</body>
+</html>

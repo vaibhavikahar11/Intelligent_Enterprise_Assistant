@@ -1,0 +1,181 @@
+================================================================================
+                    ACME CORPORATION - EMPLOYEE REIMBURSEMENT POLICY
+                    Document Version: 2.5 | Effective Date: 01-Jan-2024
+                     Maintained by: Finance & Human Resources Department
+================================================================================
+
+1. PURPOSE
+----------
+This policy establishes guidelines for reimbursing employees for legitimate
+business expenses incurred in the course of performing their duties for
+Acme Corporation. The intent is to ensure employees are fairly compensated
+for authorized expenses while maintaining fiscal responsibility and compliance.
+This policy applies to all permanent employees and consultants on approved
+engagement letters.
+
+--------------------------------------------------------------------------------
+
+2. TRAVEL REIMBURSEMENT
+------------------------
+
+2.1 DOMESTIC TRAVEL (Within India)
+   - Air Travel: Economy class tickets only for all domestic travel.
+     Business class for domestic travel is NOT eligible for reimbursement.
+   - Train Travel: AC First Class or AC 2-Tier permissible.
+   - Road Travel: Company cab or personal vehicle (see Mileage Reimbursement).
+   - Booking: All domestic travel must be booked through the approved travel
+     desk or via the company travel portal at travel.company.com.
+   - Advance booking (at least 7 days prior) is encouraged to minimize costs.
+
+2.2 INTERNATIONAL TRAVEL
+   - Air Travel: Economy class for flights UNDER 8 hours duration.
+   - Air Travel: Business class is permitted for international flights with
+     a total journey duration EXCEEDING 8 hours (layovers included).
+   - All international travel requires written approval from the department
+     VP before ticket booking.
+   - Visa fees, travel insurance, and airport transfers are reimbursable
+     with supporting documentation.
+
+2.3 MILEAGE REIMBURSEMENT
+   - Employees using their personal vehicle for official duty are reimbursed
+     at Rs 12 (twelve) per kilometer.
+   - Route and distance must be declared on the reimbursement form.
+   - GPS-based route verification may be applied for distances above 100 km.
+   - Fuel receipts should be retained and attached; however, mileage
+     reimbursement is a flat rate — actual fuel bills are not reimbursed
+     separately in addition to the per-km rate.
+
+--------------------------------------------------------------------------------
+
+3. MEAL ALLOWANCE
+------------------
+   - Domestic Travel: Rs 500 (five hundred) per day per employee.
+     This covers breakfast, lunch, and dinner combined.
+   - International Travel: $30 USD per day (or local currency equivalent).
+   - Meal allowance is not applicable for day trips within the city of
+     the employee's base location.
+   - Meals hosted for clients are claimed under "Client Entertainment"
+     (see Section 8) and are separate from the daily meal allowance.
+   - Alcohol is NOT covered under any meal or entertainment reimbursement.
+
+--------------------------------------------------------------------------------
+
+4. ACCOMMODATION
+-----------------
+
+4.1 DOMESTIC ACCOMMODATION
+   - Maximum hotel reimbursement: Rs 8,000 (eight thousand) per night
+     for domestic travel.
+   - In metro cities (Mumbai, Delhi, Bangalore, Hyderabad, Chennai, Kolkata),
+     a 20% premium (up to Rs 9,600/night) may be approved by the department head.
+   - Hotels must be booked via the company travel portal where possible.
+   - Lodging with family or friends: a fixed allowance of Rs 1,500/night applies.
+
+4.2 INTERNATIONAL ACCOMMODATION
+   - Maximum hotel reimbursement: $200 USD (two hundred US dollars) per night.
+   - This rate is a cap; employees are encouraged to book within budget.
+   - Hotel must be in a safe, business-appropriate location.
+
+--------------------------------------------------------------------------------
+
+5. SUBMISSION DEADLINE — CRITICAL RULE
+----------------------------------------
+   >> ALL REIMBURSEMENT CLAIMS MUST BE SUBMITTED WITHIN 30 (THIRTY) DAYS
+      OF THE DATE THE EXPENSE WAS INCURRED. <<
+
+   - Claims submitted AFTER 30 days from the expense date will NOT be
+     processed and will be REJECTED without exception.
+   - No retrospective approval or exception will be granted for late submissions
+     regardless of reason, unless approved in writing by the CFO.
+   - Employees are strongly advised to submit claims promptly and not wait
+     until the month-end to avoid missing the 30-day deadline.
+
+--------------------------------------------------------------------------------
+
+6. RECEIPT & DOCUMENTATION REQUIREMENTS
+-----------------------------------------
+   - ALL receipts/invoices for expenses exceeding Rs 500 MUST be attached
+     to the reimbursement claim.
+   - Receipts below Rs 500 are recommended but not mandatory.
+   - Receipts must clearly show: vendor name, date, amount, GST number (if applicable).
+   - Digital/scanned copies of receipts are accepted via the reimbursement portal.
+   - Missing receipts for amounts above Rs 500 will result in automatic rejection
+     of that line item.
+   - Credit card statements alone are NOT acceptable as receipts.
+
+--------------------------------------------------------------------------------
+
+7. MEDICAL REIMBURSEMENT
+--------------------------
+   - Eligible employees can claim up to Rs 15,000 (fifteen thousand) per
+     financial year (April to March) for medical expenses.
+   - Covers: prescription medicines, diagnostic tests, hospitalization
+     (not covered by group insurance), dental, and vision care.
+   - Medical bills must be in the employee's name or that of their declared
+     dependent (spouse, children, parents).
+   - Group health insurance claims are separate and processed via the
+     insurance portal — do not submit insurance-covered expenses here.
+   - Any unused medical reimbursement limit does NOT carry forward to
+     the next financial year.
+
+--------------------------------------------------------------------------------
+
+8. MOBILE BILL REIMBURSEMENT
+------------------------------
+   - Monthly Limit: Rs 1,500 (one thousand five hundred) per month for
+     employees in eligible grades/designations.
+   - Eligible roles are defined by the HR grade matrix (available on the
+     HR portal).
+   - Original postpaid bill or prepaid top-up receipt must be submitted.
+   - Reimbursement covers official usage; the full bill is reimbursed
+     up to the cap regardless of personal vs. official usage distinction.
+   - Prepaid recharges are reimbursable with a valid receipt.
+
+--------------------------------------------------------------------------------
+
+9. INTERNET ALLOWANCE (WORK-FROM-HOME)
+----------------------------------------
+   - Monthly Limit: Rs 1,000 (one thousand) per month for employees
+     officially designated as Work-From-Home (WFH) or Hybrid.
+   - Broadband/fiber internet bill must be submitted as evidence.
+   - Mobile data plans claimed under the Internet Allowance cannot
+     simultaneously be claimed under Mobile Bill Reimbursement.
+   - Allowance is not payable for months when the employee is on extended
+     leave (more than 15 days in a month).
+
+--------------------------------------------------------------------------------
+
+10. APPROVAL & PAYMENT PROCESS
+--------------------------------
+   Step 1: Employee completes the Reimbursement Request Form on the portal.
+   Step 2: All supporting receipts are uploaded digitally.
+   Step 3: The Reimbursement Form must be APPROVED BY THE DIRECT MANAGER.
+           The manager is expected to review and approve within 5 working days.
+   Step 4: Approved claims are forwarded to the Finance team for verification.
+   Step 5: Payment is processed within 15 (fifteen) WORKING DAYS of
+           manager approval.
+   Step 6: Reimbursement is credited to the employee's registered bank account
+           (same as salary account).
+
+--------------------------------------------------------------------------------
+
+11. POLICY VIOLATIONS & FRAUDULENT CLAIMS
+-------------------------------------------
+   - Submitting false or inflated claims constitutes fraud and will result in
+     immediate disciplinary action, up to and including termination.
+   - The Finance team conducts random audits of submitted claims.
+   - Employees found to have violated this policy will be required to refund
+     all improperly claimed amounts with interest.
+
+--------------------------------------------------------------------------------
+
+12. CONTACT
+-----------
+   Finance Helpdesk: finance@company.com | Ext. 3000
+   Reimbursement Portal: https://reimburse.company.com
+   HR Portal (for eligibility queries): https://hr.company.com
+
+--------------------------------------------------------------------------------
+      This policy supersedes all earlier reimbursement-related circulars.
+      Finance reserves the right to update this policy with 15 days' notice.
+================================================================================
