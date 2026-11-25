@@ -41,6 +41,7 @@ async function withRetry(fn, maxRetries = 5, baseDelayMs = 2000) {
 
 export async function generate(prompt, options = {}) {
   const modelName = options.modelName || config.genModel;
+  const maxRetries = options.maxRetries ?? 5;
   const generationConfig = {
     temperature: options.temperature ?? 0.1,
     maxOutputTokens: options.maxOutputTokens ?? 2048,
@@ -66,7 +67,7 @@ export async function generate(prompt, options = {}) {
       const err = new Error('Empty response from LLM'); err.status = 503; throw err;
     }
     return text;
-  });
+  }, maxRetries);
 }
 
 /**

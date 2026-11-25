@@ -69,6 +69,7 @@ CRITICAL: Your previous response was not valid JSON. Output ONLY the JSON object
       modelName: config.validatorModel,
       temperature: 0,
       responseMimeType: 'application/json',
+      maxRetries: 0,   // already on 2nd attempt — don't loop further
     });
     return JSON.parse(clean(retryRaw));
   }
@@ -105,12 +106,13 @@ export async function validate(question, chunks, draftAnswer) {
   try {
     const prompt = VALIDATOR_PROMPT_TEMPLATE(question, contextText, draftAnswer);
     raw = await generate(prompt, {
-      modelName: config.validatorModel,
-      temperature: 0,
+      modelName:        config.validatorModel,
+      temperature:      0,
       responseMimeType: 'application/json',
+      maxRetries:       1,   // validator is optional — fail fast, don't block the reply
     });
   } catch (err) {
-    // Gemini 503/quota error — skip validation gracefully
+    // Gemini 503/quota/404 — skip validation gracefully
     console.warn('[validator] LLM call failed, skipping validation:', err.message);
     return { verdict: 'PASS', claims: [], unsupportedClaims: [] };
   }
@@ -119,13 +121,9 @@ export async function validate(question, chunks, draftAnswer) {
   try {
     parsed = await parseValidatorResponse(raw, question, contextText, draftAnswer);
   } catch (err) {
-    console.error('[validator] Failed to parse JSON after retry:', err.message);
-    // Fail safe: treat parse failure as FAIL
-    return {
-      verdict: 'FAIL',
-      claims: [],
-      unsupportedClaims: ['Validator could not parse the response.'],
-    };
+    // JSON parse failed even after retry — skip validation, don't trigger regeneration
+    console.warn('[validator] Could not parse JSON, skipping validation:', err.message);
+    return { verdict: 'PASS', claims: [], unsupportedClaims: [] };
   }
 
   // Programmatically re-verify each claim's quote

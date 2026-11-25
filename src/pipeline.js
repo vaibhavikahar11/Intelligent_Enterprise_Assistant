@@ -134,7 +134,8 @@ export async function runPipeline({
       if (verdict === 'FAIL') {
         console.warn('[pipeline] Validator FAILED — regenerating with constraints…');
         emit('generation', 'running', { detail: 'Regenerating (constrained)' });
-        answer = await generateAnswer(question, chunks, { unsupportedClaims: validation.unsupportedClaims }, onToken);
+        // Do NOT pass onToken here — prevents duplicate streaming into the same bubble
+        answer = await generateAnswer(question, chunks, { unsupportedClaims: validation.unsupportedClaims }, null);
         emit('generation', 'done', { detail: 'Regenerated' });
 
         emit('validation', 'running', { detail: 'Re-validating' });
@@ -148,10 +149,12 @@ export async function runPipeline({
         });
 
         if (verdict === 'FAIL') {
+          // Validator failed twice — deliver the regenerated answer anyway rather than
+          // the generic safe fallback. Mark as FAIL so the UI shows the warning badge.
           const latencyMs = Date.now() - start;
-          emit('reply', 'sent', { detail: 'Safe fallback returned' });
-          logRequest({ ...logEntry, chunkIds, answer: SAFE_FALLBACK, verdict: 'FAIL', cacheHit: 'none', latencyMs });
-          return { answer: SAFE_FALLBACK, sources: buildSourcesPayload(chunks), validated: false, cacheHit: 'none', latencyMs, verdict: 'FAIL', claims };
+          emit('reply', 'sent', { detail: 'Delivered with validation warning' });
+          logRequest({ ...logEntry, chunkIds, answer, verdict: 'FAIL', cacheHit: 'none', latencyMs });
+          return { answer, sources: buildSourcesPayload(chunks), validated: false, cacheHit: 'none', latencyMs, verdict: 'FAIL', claims };
         }
       }
     }
