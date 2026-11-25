@@ -6,24 +6,21 @@ import 'dotenv/config';
 
 const required = [
   'GEMINI_API_KEY',
-  'GEN_MODEL',
-  'VALIDATOR_MODEL',
-  'EMBED_MODEL',
 ];
 
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length > 0) {
   console.error(`[config] Missing required environment variables: ${missing.join(', ')}`);
-  console.error('[config] Copy .env.example to .env and fill in the values.');
+  console.error('[config] Set them in .env (local) or in your hosting service Variables tab (e.g. Railway) and redeploy.');
   process.exit(1);
 }
 
 const config = Object.freeze({
   // LLM
   geminiApiKey: process.env.GEMINI_API_KEY,
-  genModel: process.env.GEN_MODEL,
-  validatorModel: process.env.VALIDATOR_MODEL,
-  embedModel: process.env.EMBED_MODEL,
+  genModel: process.env.GEN_MODEL || 'gemini-3.5-flash-lite',
+  validatorModel: process.env.VALIDATOR_MODEL || 'gemini-3.5-flash-lite',
+  embedModel: process.env.EMBED_MODEL || 'gemini-embedding-001',
 
   // Twilio
   twilioAccountSid: process.env.TWILIO_ACCOUNT_SID || '',

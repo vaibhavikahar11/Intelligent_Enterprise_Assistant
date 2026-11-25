@@ -126,6 +126,11 @@ async function getCollection() {
   if (_collection) return _collection;
   if (_memStore)   return _memStore;
 
+  if (!config.chromaUrl) {
+    _memStore = new InMemoryVectorStore();
+    return _memStore;
+  }
+
   // Try real ChromaDB HTTP server
   try {
     const client = new ChromaClient({ path: config.chromaUrl });

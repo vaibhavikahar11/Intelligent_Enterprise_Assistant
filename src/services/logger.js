@@ -7,11 +7,17 @@
  * Stores every pipeline invocation with timing and validator results.
  * Phone numbers are stored as SHA-256 hashes (never raw PII).
  */
-import { DatabaseSync } from 'node:sqlite';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+let DatabaseSync = null;
+try {
+  ({ DatabaseSync } = await import('node:sqlite'));
+} catch (err) {
+  console.warn('[logger] node:sqlite unavailable — request logging disabled:', err.message);
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH   = path.resolve(__dirname, '../../logs/iea.sqlite');
@@ -19,6 +25,7 @@ const DB_PATH   = path.resolve(__dirname, '../../logs/iea.sqlite');
 let _db = null;
 
 function getDb() {
+  if (!DatabaseSync) return null;
   if (_db) return _db;
 
   // Ensure the logs directory exists (synchronous, safe at startup)
@@ -66,6 +73,7 @@ function getDb() {
 export function logRequest(entry) {
   try {
     const db = getDb();
+    if (!db) return;
 
     const hashedPhone = entry.phone
       ? crypto.createHash('sha256').update(entry.phone).digest('hex').slice(0, 20)
@@ -103,6 +111,7 @@ export function logRequest(entry) {
  */
 export function getRecentLogs(limit = 50) {
   const db = getDb();
+  if (!db) return [];
   return db
     .prepare('SELECT * FROM request_log ORDER BY id DESC LIMIT ?')
     .all(limit);

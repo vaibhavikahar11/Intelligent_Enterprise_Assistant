@@ -13,33 +13,124 @@ import config from '../config.js';
 
 let _redis = null;
 
+/** Zero-dependency in-memory fallback when neither Redis nor ioredis-mock is available. */
+class InMemoryCacheStore {
+  constructor() {
+    this._kv = new Map();
+    this._lists = new Map();
+    this._exp = new Map();
+  }
+
+  _isExpired(key) {
+    const exp = this._exp.get(key);
+    if (exp && Date.now() > exp) {
+      this._kv.delete(key);
+      this._lists.delete(key);
+      this._exp.delete(key);
+      return true;
+    }
+    return false;
+  }
+
+  async ping() { return 'PONG'; }
+
+  async get(key) {
+    if (this._isExpired(key)) return null;
+    return this._kv.has(key) ? this._kv.get(key) : null;
+  }
+
+  async setex(key, ttlSeconds, value) {
+    this._kv.set(key, String(value));
+    this._exp.set(key, Date.now() + ttlSeconds * 1000);
+    return 'OK';
+  }
+
+  async lrange(key, start, stop) {
+    if (this._isExpired(key)) return [];
+    const list = this._lists.get(key) || [];
+    const end = stop < 0 ? list.length + stop + 1 : stop + 1;
+    return list.slice(start, end);
+  }
+
+  async lpush(key, ...values) {
+    if (this._isExpired(key)) {
+      this._lists.set(key, []);
+    }
+    const list = this._lists.get(key) || [];
+    for (const v of values) list.unshift(String(v));
+    this._lists.set(key, list);
+    return list.length;
+  }
+
+  async ltrim(key, start, stop) {
+    const list = this._lists.get(key);
+    if (!list) return 'OK';
+    const end = stop < 0 ? list.length + stop + 1 : stop + 1;
+    this._lists.set(key, list.slice(start, end));
+    return 'OK';
+  }
+
+  async expire(key, ttlSeconds) {
+    this._exp.set(key, Date.now() + ttlSeconds * 1000);
+    return 1;
+  }
+
+  async del(...keys) {
+    let count = 0;
+    for (const k of keys) {
+      if (this._kv.delete(k) || this._lists.delete(k)) count++;
+      this._exp.delete(k);
+    }
+    return count;
+  }
+
+  async scan(_cursor, _matchKw, pattern) {
+    const prefix = pattern.endsWith('*') ? pattern.slice(0, -1) : pattern;
+    const keys = [];
+    for (const k of [...this._kv.keys(), ...this._lists.keys()]) {
+      if (!this._isExpired(k) && (pattern.endsWith('*') ? k.startsWith(prefix) : k === pattern)) {
+        keys.push(k);
+      }
+    }
+    return ['0', keys];
+  }
+}
+
 async function getRedis() {
   if (_redis) return _redis;
 
-  // Try real Redis first
+  // Try real Redis first (only if REDIS_URL is configured)
+  if (config.redisUrl) {
+    try {
+      const Redis = (await import('ioredis')).default;
+      const client = new Redis(config.redisUrl, {
+        lazyConnect: true,
+        connectTimeout: 1000,
+        maxRetriesPerRequest: 1,
+        enableReadyCheck: false,
+        retryStrategy: () => null,
+      });
+      client.on('error', () => {}); // swallow connection errors during probe
+      await client.connect();
+      await client.ping();
+      console.log('[cache] Connected to Redis');
+      _redis = client;
+      _redis.removeAllListeners('error');
+      _redis.on('error', (err) => console.warn('[cache] Redis error:', err.message));
+      return _redis;
+    } catch {
+      // fall through to in-memory cache
+    }
+  }
+
+  console.warn('[cache] Redis unavailable — using in-memory cache (cache resets on restart)');
   try {
-    const Redis = (await import('ioredis')).default;
-    const client = new Redis(config.redisUrl, {
-      lazyConnect: true,
-      connectTimeout: 1000,
-      maxRetriesPerRequest: 1,
-      enableReadyCheck: false,
-      retryStrategy: () => null,
-    });
-    client.on('error', () => {}); // swallow connection errors during probe
-    await client.connect();
-    await client.ping();
-    console.log('[cache] Connected to Redis');
-    _redis = client;
-    _redis.removeAllListeners('error');
-    _redis.on('error', (err) => console.warn('[cache] Redis error:', err.message));
-    return _redis;
-  } catch {
-    console.warn('[cache] Redis unavailable — using in-memory mock (cache resets on restart)');
     const RedisMock = (await import('ioredis-mock')).default;
     _redis = new RedisMock();
-    return _redis;
+  } catch {
+    _redis = new InMemoryCacheStore();
   }
+  return _redis;
 }
 
 /** Normalise a question for consistent hashing. */

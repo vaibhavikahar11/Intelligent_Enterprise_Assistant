@@ -20,6 +20,12 @@ async function getRedis() {
   if (_redis) return _redis;
   if (_useMemory) return null;
 
+  if (!config.redisUrl) {
+    console.warn('[session] REDIS_URL not set — using in-memory session store');
+    _useMemory = true;
+    return null;
+  }
+
   try {
     const Redis = (await import('ioredis')).default;
     const client = new Redis(config.redisUrl, {
