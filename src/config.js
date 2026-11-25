@@ -9,8 +9,6 @@ const required = [
   'GEN_MODEL',
   'VALIDATOR_MODEL',
   'EMBED_MODEL',
-  'REDIS_URL',
-  'CHROMA_URL',
 ];
 
 const missing = required.filter((key) => !process.env[key]);
@@ -33,8 +31,8 @@ const config = Object.freeze({
   twilioWhatsappNumber: process.env.TWILIO_WHATSAPP_NUMBER || '',
 
   // Infrastructure
-  redisUrl: process.env.REDIS_URL,
-  chromaUrl: process.env.CHROMA_URL,
+  redisUrl: process.env.REDIS_URL || '',
+  chromaUrl: process.env.CHROMA_URL || '',
   port: parseInt(process.env.PORT || '3000', 10),
   publicBaseUrl: process.env.PUBLIC_BASE_URL || '',
 
