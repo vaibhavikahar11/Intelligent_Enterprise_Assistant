@@ -3,14 +3,15 @@
  *
  * Design:
  * 1. Validate the Twilio X-Twilio-Signature header to reject spoofed requests.
- * 2. Respond with empty TwiML immediately (HTTP 200) to prevent the 15-second
- *    webhook timeout.
- * 3. Process the message asynchronously and deliver the reply via the Twilio
- *    REST API (not via TwiML response body).
+ * 2. Compute the reply (menu, department switch, or RAG pipeline) and return it
+ *    directly via TwiML (<Response><Message>...</Message></Response>) when it
+ *    finishes under 11s (avoids trial-account REST API error 21654).
+ * 3. If processing exceeds 11s, respond with empty TwiML before Twilio's 15s
+ *    webhook timeout and fall back to delivering the reply via the REST API.
  *
  * Flow for a new number:
  *   → Show department menu ("1 for HR, 2 for IT")
- *   → Save choice in Redis session
+ *   → Save choice in session store
  *   → Subsequent messages go straight to the RAG pipeline
  *   → Sending "menu" resets the session
  */
@@ -115,6 +116,8 @@ const HELP_TEXT =
   'You can now ask me any question about company policies.\n' +
   'Send *menu* to change your department.';
 
+const WEBHOOK_TIMEOUT_MS = 11000;
+
 // ─── Webhook endpoint ─────────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   // 1. Validate Twilio signature
@@ -123,60 +126,83 @@ router.post('/', async (req, res) => {
     return res.status(403).send('Forbidden');
   }
 
-  // 2. Acknowledge immediately with empty TwiML (prevents 15-second timeout)
-  res.type('text/xml').status(200).send('<Response></Response>');
-
-  // 3. Extract message fields
+  // 2. Extract message fields
   const from = (req.body.From || '').trim();
   const body = (req.body.Body || '').trim();
 
-  if (!from || !body) return; // nothing to process
+  if (!from || !body) {
+    return res.type('text/xml').status(200).send('<Response></Response>');
+  }
 
   console.log(`[whatsapp] Incoming from ...${from.slice(-4)}: "${body.slice(0, 60)}"`);
 
-  // 4. Process asynchronously (fire-and-forget with error handling)
-  processWhatsApp(from, body).catch((err) =>
-    console.error('[whatsapp] Async processing error:', err.message)
-  );
+  // 3. Reply directly via TwiML when <11s (works on Twilio trial accounts where
+  //    outbound REST freeform body calls return 21654: ContentSid Required).
+  let responded = false;
+  const timer = setTimeout(() => {
+    if (responded || res.headersSent) return;
+    responded = true;
+    console.warn('[whatsapp] Processing >11s — acking webhook and falling back to REST API');
+    res.type('text/xml').status(200).send('<Response></Response>');
+  }, WEBHOOK_TIMEOUT_MS);
+
+  try {
+    const reply = await buildWhatsAppReply(from, body);
+    clearTimeout(timer);
+
+    if (!responded && !res.headersSent) {
+      responded = true;
+      const twiml = new twilio.twiml.MessagingResponse();
+      const parts = splitMessage(reply);
+      for (const part of parts) {
+        twiml.message(part);
+      }
+      console.log(`[whatsapp] Replied via TwiML (${parts.length} part(s))`);
+      return res.type('text/xml').status(200).send(twiml.toString());
+    }
+
+    await sendWhatsApp(from, reply);
+  } catch (err) {
+    clearTimeout(timer);
+    console.error('[whatsapp] Processing error:', err.message);
+    if (!responded && !res.headersSent) {
+      responded = true;
+      res.type('text/xml').status(200).send('<Response></Response>');
+    }
+  }
 });
 
-// ─── Async message processor ──────────────────────────────────────────────────
-async function processWhatsApp(from, body) {
+// ─── Message processor ────────────────────────────────────────────────────────
+async function buildWhatsAppReply(from, body) {
   const text = body.trim();
   const lower = text.toLowerCase();
 
   // "menu" resets the session
   if (lower === 'menu') {
     await clearDepartment(from);
-    await sendWhatsApp(from, MENU_TEXT);
-    return;
+    return MENU_TEXT;
   }
 
   // Check if the user has already selected a department
-  let department = await getDepartment(from);
+  const department = await getDepartment(from);
 
   if (!department) {
     // Handle department selection ('1' or 'hr', '2' or 'it')
     if (lower === '1' || lower === 'hr') {
       await setDepartment(from, 'HR');
-      await sendWhatsApp(from, `✅ Great! Switched to *HR* mode.\n${HELP_TEXT}`);
-    } else if (lower === '2' || lower === 'it') {
-      await setDepartment(from, 'IT');
-      await sendWhatsApp(from, `✅ Great! Switched to *IT* mode.\n${HELP_TEXT}`);
-    } else {
-      // Show menu for any other first input
-      await sendWhatsApp(from, MENU_TEXT);
+      return `✅ Great! Switched to *HR* mode.\n${HELP_TEXT}`;
     }
-    return;
+    if (lower === '2' || lower === 'it') {
+      await setDepartment(from, 'IT');
+      return `✅ Great! Switched to *IT* mode.\n${HELP_TEXT}`;
+    }
+    // Show menu for any other first input
+    return MENU_TEXT;
   }
 
   // Friendly reminder on short greetings once a department is active
   if (/^(hi|hello|hey|help)[\s!?.]*$/i.test(text)) {
-    await sendWhatsApp(
-      from,
-      `You're currently in *${department}* mode. Ask any ${department} policy question, or reply *menu* to switch departments.`
-    );
-    return;
+    return `You're currently in *${department}* mode. Ask any ${department} policy question, or reply *menu* to switch departments.`;
   }
 
   // User has a department — run the RAG pipeline
@@ -203,7 +229,7 @@ async function processWhatsApp(from, body) {
     reply += `\n_⚡ Cached response_`;
   }
 
-  await sendWhatsApp(from, reply);
+  return reply;
 }
 
 export default router;
