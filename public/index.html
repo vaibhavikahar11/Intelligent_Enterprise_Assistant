@@ -106,6 +106,7 @@
     .badge.cached     { background:#064e3b;color:#34d399; }
     .badge.cached-sem { background:#054a38;color:#6ee7b7; }
     .badge.error      { background:#450a0a;color:#fca5a5; }
+    .badge.warning    { background:#451a03;color:#fcd34d; }
     .badge.filtered   { background:#422006;color:#fdba74; }
     .badge.not-found  { background:#312e81;color:#a5b4fc; }
     .sources { font-size:.7rem;color:var(--text-muted);margin-top:3px; }
@@ -681,7 +682,8 @@
     if (vd === 'CACHE_HIT')return { badgeClass:'cached',     badgeLabel:'⚡ Cached' };
     if (vd === 'FILTERED') return { badgeClass:'filtered',   badgeLabel:'🚫 Filtered' };
     if (vd === 'NOT_FOUND')return { badgeClass:'not-found',  badgeLabel:'🔍 Not found' };
-    if (vd === 'FAIL' || vd === 'ERROR') return { badgeClass:'error', badgeLabel:'✗ Error' };
+    if (vd === 'FAIL')  return { badgeClass:'warning', badgeLabel:'⚠ Validated (warning)' };
+    if (vd === 'ERROR') return { badgeClass:'error',   badgeLabel:'✗ Error' };
     return { badgeClass:'validated', badgeLabel:'✓ Validated' };
   }
 
