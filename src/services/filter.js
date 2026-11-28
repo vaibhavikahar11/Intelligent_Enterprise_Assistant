@@ -38,8 +38,8 @@ const INJECTION_PATTERNS = [
 // Domain keywords anchor the question to HR/IT. If none are present, the
 // question must contain a question-word AND must NOT be clearly off-topic.
 const DOMAIN_KEYWORDS = [
-  /\b(hr|it|leave|vacation|holiday|policy|benefit|salary|payroll|onboard|offboard|reimburs|expense|performance|appraisal|promotion|resign|terminat|hire|recruit|handbook|code of conduct|code-of-conduct)\b/i,
-  /\b(vpn|password|wifi|wi-fi|laptop|hardware|software|helpdesk|help desk|ticket|access|account|email|device|setup|install|reset|2fa|mfa|two.factor|authenticate|remote|network|printer|monitor|keyboard|headset)\b/i,
+  /\b(hr|it|leaves?|vacations?|holidays?|polic(?:y|ies)|benefits?|perks?|salar(?:y|ies)|payroll|bonus(?:es)?|stipend|overtime|probation|working hours?|work[- ]?from[- ]?home|wfh|employees?|onboard(?:ing|ed)?|offboard(?:ing|ed)?|reimburs(?:e|ement|ements)?|expenses?|performance|appraisals?|promotions?|resign(?:ation|ing)?|terminat(?:e|ed|ing|ion)?|hir(?:e|ing)|recruit(?:ing|ment)?|training|transfer|parental|maternity|paternity|sick|pto|severance|fmla|401k|insurance|moonlighting|handbook|code of conduct|code-of-conduct)\b/i,
+  /\b(vpn|passwords?|wifi|wi-fi|laptops?|hardware|software|helpdesk|help desk|tickets?|access|accounts?|emails?|devices?|setup|install(?:ation)?|reset|2fa|mfa|two[- ]?(?:factor|step)|verification|sso|authenticat(?:e|ion)|remote|networks?|printers?|monitors?|keyboards?|headsets?|incidents?|sla)\b/i,
 ];
 
 const QUESTION_WORDS = [
@@ -66,9 +66,11 @@ export function checkInput(text) {
 
   const trimmed = text.trim();
   const lower   = trimmed.toLowerCase();
+  const isShortGreeting = trimmed.length <= 20 &&
+    /^(hi|hello|hey|thanks|thank you|ok|okay|sure|yes|no|bye|good|help)[\s!?.]*$/i.test(trimmed);
 
   // ── 1. Length ──────────────────────────────────────────────────────────────
-  if (trimmed.length < MIN_INPUT_LENGTH) {
+  if (trimmed.length < MIN_INPUT_LENGTH && !isShortGreeting) {
     return { blocked: true, reason: 'Input is too short. Please ask a complete question.' };
   }
   if (trimmed.length > MAX_INPUT_LENGTH) {
@@ -111,9 +113,6 @@ export function checkInput(text) {
 
   // ── 5. Topic relevance ────────────────────────────────────────────────────
   // Allow short greetings (hi, hello, thanks) through without domain check
-  const isShortGreeting = trimmed.length <= 20 &&
-    /^(hi|hello|hey|thanks|thank you|ok|okay|sure|yes|no|bye|good|help)[\s!?.]*$/i.test(trimmed);
-
   if (!isShortGreeting) {
     // Block explicit off-topic subjects even if they have a question word
     const isOffTopic = OFF_TOPIC_PATTERNS.some(p => p.test(trimmed));

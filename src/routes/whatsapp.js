@@ -22,16 +22,34 @@ import { getDepartment, setDepartment, clearDepartment } from '../services/sessi
 
 const router = Router();
 
-// ─── Twilio signature validation ──────────────────────────────────────────────
+// ─── Address & signature helpers ──────────────────────────────────────────────
+function normalizeWhatsAppAddress(addr) {
+  const cleaned = (addr || '')
+    .trim()
+    .replace(/^whatsapp:/i, '')
+    .replace(/[\s()-]/g, '');
+  if (!cleaned) return '';
+  const withPlus = /^\d+$/.test(cleaned) ? `+${cleaned}` : cleaned;
+  return `whatsapp:${withPlus}`;
+}
+
 function isTwilioRequest(req) {
   // Skip validation when auth token / public URL are not configured (local dev)
   if (!config.twilioAuthToken || !config.publicBaseUrl) {
     console.warn('[whatsapp] ⚠ Twilio signature validation SKIPPED (no auth token / public URL)');
     return true;
   }
-  const url = `${config.publicBaseUrl}/whatsapp`;
+  const baseUrl = config.publicBaseUrl
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/whatsapp$/i, '');
+  const url = `${baseUrl}${req.originalUrl || '/whatsapp'}`;
   const signature = req.headers['x-twilio-signature'] || '';
-  return twilio.validateRequest(config.twilioAuthToken, signature, url, req.body);
+  const valid = twilio.validateRequest(config.twilioAuthToken, signature, url, req.body);
+  if (!valid) {
+    console.warn(`[whatsapp] Invalid Twilio signature (expected url: ${url})`);
+  }
+  return valid;
 }
 
 // ─── Message splitting for the 1600-char WhatsApp limit ──────────────────────
@@ -54,18 +72,34 @@ function splitMessage(text, maxLen = 1500) {
 
 // ─── Send a WhatsApp reply via the Twilio REST API ────────────────────────────
 async function sendWhatsApp(to, body) {
+  const fromNumber = normalizeWhatsAppAddress(config.twilioWhatsappNumber);
+  const toNumber = normalizeWhatsAppAddress(to);
+
+  if (!config.twilioAccountSid || !config.twilioAuthToken || !fromNumber) {
+    const missing = [
+      !config.twilioAccountSid && 'TWILIO_ACCOUNT_SID',
+      !config.twilioAuthToken && 'TWILIO_AUTH_TOKEN',
+      !fromNumber && 'TWILIO_WHATSAPP_NUMBER',
+    ].filter(Boolean);
+    console.error(`[whatsapp] Cannot send reply — missing env vars: ${missing.join(', ')}`);
+    return;
+  }
+
   try {
     const client = twilio(config.twilioAccountSid, config.twilioAuthToken);
     for (const part of splitMessage(body)) {
-      await client.messages.create({
-        from: config.twilioWhatsappNumber,
-        to,
+      const msg = await client.messages.create({
+        from: fromNumber,
+        to: toNumber,
         body: part,
       });
+      console.log(`[whatsapp] Reply sent (SID=${msg.sid}, status=${msg.status})`);
     }
   } catch (err) {
-    // Never crash on Twilio errors — just log
-    console.error('[whatsapp] Failed to send message:', err.message);
+    // Never crash on Twilio errors — log code/status for Railway debugging
+    console.error(
+      `[whatsapp] Failed to send message (code=${err.code || 'n/a'}, status=${err.status || 'n/a'}): ${err.message}`
+    );
   }
 }
 
@@ -98,6 +132,8 @@ router.post('/', async (req, res) => {
 
   if (!from || !body) return; // nothing to process
 
+  console.log(`[whatsapp] Incoming from ...${from.slice(-4)}: "${body.slice(0, 60)}"`);
+
   // 4. Process asynchronously (fire-and-forget with error handling)
   processWhatsApp(from, body).catch((err) =>
     console.error('[whatsapp] Async processing error:', err.message)
@@ -107,9 +143,10 @@ router.post('/', async (req, res) => {
 // ─── Async message processor ──────────────────────────────────────────────────
 async function processWhatsApp(from, body) {
   const text = body.trim();
+  const lower = text.toLowerCase();
 
   // "menu" resets the session
-  if (text.toLowerCase() === 'menu') {
+  if (lower === 'menu') {
     await clearDepartment(from);
     await sendWhatsApp(from, MENU_TEXT);
     return;
@@ -119,17 +156,26 @@ async function processWhatsApp(from, body) {
   let department = await getDepartment(from);
 
   if (!department) {
-    // Handle department selection
-    if (text === '1') {
+    // Handle department selection ('1' or 'hr', '2' or 'it')
+    if (lower === '1' || lower === 'hr') {
       await setDepartment(from, 'HR');
       await sendWhatsApp(from, `✅ Great! Switched to *HR* mode.\n${HELP_TEXT}`);
-    } else if (text === '2') {
+    } else if (lower === '2' || lower === 'it') {
       await setDepartment(from, 'IT');
       await sendWhatsApp(from, `✅ Great! Switched to *IT* mode.\n${HELP_TEXT}`);
     } else {
       // Show menu for any other first input
       await sendWhatsApp(from, MENU_TEXT);
     }
+    return;
+  }
+
+  // Friendly reminder on short greetings once a department is active
+  if (/^(hi|hello|hey|help)[\s!?.]*$/i.test(text)) {
+    await sendWhatsApp(
+      from,
+      `You're currently in *${department}* mode. Ask any ${department} policy question, or reply *menu* to switch departments.`
+    );
     return;
   }
 
@@ -144,10 +190,12 @@ async function processWhatsApp(from, body) {
   // Build the reply text
   let reply = result.answer;
 
-  // Append source documents when available
-  if (result.sources && result.sources.length > 0) {
-    const srcNames = [...new Set(result.sources.map((s) => s.source))].join(', ');
-    reply += `\n\n_Source: ${srcNames}_`;
+  // Append source documents when available (if not already cited in the answer)
+  if (result.sources && result.sources.length > 0 && !/sources?:/i.test(reply)) {
+    const srcNames = [
+      ...new Set(result.sources.map((s) => s.sourceFile || s.source).filter(Boolean)),
+    ].join(', ');
+    if (srcNames) reply += `\n\n_Source: ${srcNames}_`;
   }
 
   // Append cache badge
