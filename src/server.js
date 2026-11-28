@@ -49,7 +49,14 @@ app.use('/ask', apiLimiter);
 app.use('/whatsapp', apiLimiter);
 
 // ─── Body parsers ─────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '1mb' }));
+app.use(
+  express.json({
+    limit: '1mb',
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 
 // ─── Static files (web chat UI) ───────────────────────────────────────────────

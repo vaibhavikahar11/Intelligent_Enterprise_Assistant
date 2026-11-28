@@ -27,6 +27,13 @@ const config = Object.freeze({
   twilioAuthToken: process.env.TWILIO_AUTH_TOKEN || '',
   twilioWhatsappNumber: process.env.TWILIO_WHATSAPP_NUMBER || '',
 
+  // Meta WhatsApp Cloud API
+  metaAccessToken: process.env.META_WHATSAPP_TOKEN || '',
+  metaPhoneNumberId: process.env.META_PHONE_NUMBER_ID || '',
+  metaVerifyToken: process.env.META_VERIFY_TOKEN || '',
+  metaAppSecret: process.env.META_APP_SECRET || '',
+  metaGraphVersion: process.env.META_GRAPH_VERSION || 'v22.0',
+
   // Infrastructure
   redisUrl: process.env.REDIS_URL || '',
   chromaUrl: process.env.CHROMA_URL || '',

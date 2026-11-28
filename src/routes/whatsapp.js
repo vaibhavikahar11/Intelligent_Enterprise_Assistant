@@ -1,20 +1,22 @@
 /**
- * whatsapp.js – Twilio WhatsApp webhook handler.
+ * whatsapp.js – WhatsApp webhook handler (Meta Cloud API + Twilio fallback).
  *
- * Design:
- * 1. Validate the Twilio X-Twilio-Signature header to reject spoofed requests.
- * 2. Compute the reply (menu, department switch, or RAG pipeline) and return it
- *    directly via TwiML (<Response><Message>...</Message></Response>) when it
- *    finishes under 11s (avoids trial-account REST API error 21654).
- * 3. If processing exceeds 11s, respond with empty TwiML before Twilio's 15s
- *    webhook timeout and fall back to delivering the reply via the REST API.
+ * Meta Cloud API flow:
+ * - GET  /whatsapp : Hub challenge verification using META_VERIFY_TOKEN
+ * - POST /whatsapp : Handles JSON payloads (`object === 'whatsapp_business_account'`),
+ *                    responds 200 immediately, runs shared pipeline, and sends
+ *                    custom text replies via Graph API (`/{phoneNumberId}/messages`).
  *
- * Flow for a new number:
+ * Twilio flow (legacy / fallback):
+ * - POST /whatsapp : Validates X-Twilio-Signature, replies via TwiML (<11s) or REST.
+ *
+ * Shared conversation flow:
  *   → Show department menu ("1 for HR, 2 for IT")
  *   → Save choice in session store
  *   → Subsequent messages go straight to the RAG pipeline
  *   → Sending "menu" resets the session
  */
+import crypto from 'crypto';
 import { Router } from 'express';
 import twilio from 'twilio';
 import config from '../config.js';
@@ -22,6 +24,131 @@ import { runPipeline } from '../pipeline.js';
 import { getDepartment, setDepartment, clearDepartment } from '../services/session.js';
 
 const router = Router();
+
+// Deduplicate Meta webhook retries by message ID (bounded FIFO set)
+const _seenMessageIds = new Set();
+const MAX_SEEN_IDS = 500;
+
+function markMessageSeen(id) {
+  if (!id) return false;
+  if (_seenMessageIds.has(id)) return true;
+  _seenMessageIds.add(id);
+  if (_seenMessageIds.size > MAX_SEEN_IDS) {
+    const oldest = _seenMessageIds.values().next().value;
+    _seenMessageIds.delete(oldest);
+  }
+  return false;
+}
+
+// ─── Meta Cloud API signature & send helpers ──────────────────────────────────
+function isMetaSignatureValid(req) {
+  if (!config.metaAppSecret) return true; // optional unless META_APP_SECRET is set
+  const header = req.headers['x-hub-signature-256'] || '';
+  if (!header.startsWith('sha256=') || !req.rawBody) return false;
+  const expected =
+    'sha256=' +
+    crypto.createHmac('sha256', config.metaAppSecret).update(req.rawBody).digest('hex');
+  const a = Buffer.from(header);
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+async function sendMetaWhatsApp(phoneNumberId, to, body) {
+  const pid = config.metaPhoneNumberId || phoneNumberId;
+  if (!config.metaAccessToken || !pid) {
+    const missing = [
+      !config.metaAccessToken && 'META_WHATSAPP_TOKEN',
+      !pid && 'META_PHONE_NUMBER_ID',
+    ].filter(Boolean);
+    console.error(`[whatsapp-meta] Cannot send reply — missing env vars: ${missing.join(', ')}`);
+    return;
+  }
+
+  const endpoint = `https://graph.facebook.com/${config.metaGraphVersion}/${pid}/messages`;
+  for (const part of splitMessage(body, 3500)) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.metaAccessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          recipient_type: 'individual',
+          to,
+          type: 'text',
+          text: { preview_url: false, body: part },
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.error(
+          `[whatsapp-meta] Failed to send (status=${res.status}, code=${data?.error?.code || 'n/a'}): ${data?.error?.message || res.statusText}`
+        );
+      } else {
+        console.log(`[whatsapp-meta] Reply sent (id=${data?.messages?.[0]?.id || 'ok'})`);
+      }
+    } catch (err) {
+      console.error('[whatsapp-meta] Network error sending message:', err.message);
+    }
+  }
+}
+
+async function handleMetaWebhook(req, res) {
+  if (!isMetaSignatureValid(req)) {
+    console.warn('[whatsapp-meta] Rejected request with invalid X-Hub-Signature-256');
+    return res.sendStatus(403);
+  }
+
+  // Acknowledge immediately so Meta does not retry the webhook
+  res.status(200).send('EVENT_RECEIVED');
+
+  const entries = Array.isArray(req.body?.entry) ? req.body.entry : [];
+  for (const entry of entries) {
+    const changes = Array.isArray(entry?.changes) ? entry.changes : [];
+    for (const change of changes) {
+      if (change?.field !== 'messages') continue;
+      const value = change.value || {};
+      const phoneNumberId = value?.metadata?.phone_number_id || '';
+      const messages = Array.isArray(value.messages) ? value.messages : [];
+      const waId = value?.contacts?.[0]?.wa_id || '';
+
+      for (const msg of messages) {
+        if (markMessageSeen(msg.id)) continue;
+
+        const from = (waId || msg.from || '').trim();
+        if (!from) continue;
+
+        if (msg.type !== 'text') {
+          console.log(`[whatsapp-meta] Non-text (${msg.type}) from ...${from.slice(-4)}`);
+          await sendMetaWhatsApp(
+            phoneNumberId,
+            from,
+            'Sorry, I can only read text messages right now. Please type your HR or IT question.'
+          );
+          continue;
+        }
+
+        const body = (msg.text?.body || '').trim();
+        if (!body) continue;
+
+        console.log(`[whatsapp-meta] Incoming from ...${from.slice(-4)}: "${body.slice(0, 60)}"`);
+        try {
+          const reply = await buildWhatsAppReply(from, body);
+          await sendMetaWhatsApp(phoneNumberId, from, reply);
+        } catch (err) {
+          console.error('[whatsapp-meta] Processing error:', err.message);
+          await sendMetaWhatsApp(
+            phoneNumberId,
+            from,
+            'Sorry, something went wrong while processing your question. Please try again.'
+          );
+        }
+      }
+    }
+  }
+}
 
 // ─── Address & signature helpers ──────────────────────────────────────────────
 function normalizeWhatsAppAddress(addr) {
@@ -118,8 +245,37 @@ const HELP_TEXT =
 
 const WEBHOOK_TIMEOUT_MS = 11000;
 
-// ─── Webhook endpoint ─────────────────────────────────────────────────────────
+// ─── Meta webhook verification (GET /whatsapp) ────────────────────────────────
+router.get('/', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (!mode || !token) {
+    return res.sendStatus(400);
+  }
+  if (!config.metaVerifyToken) {
+    console.warn('[whatsapp-meta] Verification failed — META_VERIFY_TOKEN is not set');
+    return res.sendStatus(403);
+  }
+
+  const a = Buffer.from(String(token));
+  const b = Buffer.from(config.metaVerifyToken);
+  if (mode === 'subscribe' && a.length === b.length && crypto.timingSafeEqual(a, b)) {
+    console.log('[whatsapp-meta] Webhook verified');
+    return res.status(200).send(String(challenge || ''));
+  }
+
+  console.warn('[whatsapp-meta] Webhook verification rejected (token mismatch)');
+  return res.sendStatus(403);
+});
+
+// ─── Webhook endpoint (POST /whatsapp: Meta JSON or Twilio form-urlencoded) ──
 router.post('/', async (req, res) => {
+  if (req.body?.object === 'whatsapp_business_account') {
+    return handleMetaWebhook(req, res);
+  }
+
   // 1. Validate Twilio signature
   if (!isTwilioRequest(req)) {
     console.warn('[whatsapp] Rejected request with invalid Twilio signature');
